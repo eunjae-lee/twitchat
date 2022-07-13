@@ -77,7 +77,7 @@ test.describe('Mark all as completed', () => {
 		await expect(page.locator('.todo-list li')).toHaveClass([
 			'completed',
 			'completed',
-			'completed'
+			'completed',
 		]);
 		await checkNumberOfCompletedTodosInLocalStorage(page, 3);
 	});
@@ -92,7 +92,7 @@ test.describe('Mark all as completed', () => {
 	});
 
 	test('complete all checkbox should update state when items are completed / cleared', async ({
-		page
+		page,
 	}) => {
 		const toggleAll = page.locator('.toggle-all');
 		await toggleAll.check();
