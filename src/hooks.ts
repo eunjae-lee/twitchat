@@ -1,4 +1,6 @@
-import type { HandleError } from '@sveltejs/kit';
+import type { HandleError, GetSession, Handle, RequestEvent } from '@sveltejs/kit';
+import { handleAuth } from '@supabase/auth-helpers-sveltekit';
+import { sequence } from '@sveltejs/kit/hooks';
 
 import * as Sentry from '@sentry/node';
 import '@sentry/tracing';
@@ -15,3 +17,18 @@ Sentry.init({
 export async function handleError({ error }: Parameters<HandleError>[0]) {
 	Sentry.captureException(error);
 }
+
+export const handle: Handle = sequence(
+	...handleAuth({
+		logout: { returnTo: '/auth/signin' },
+	})
+);
+
+export const getSession: GetSession = async (event: RequestEvent) => {
+	const { user, accessToken, error } = event.locals;
+	return {
+		user,
+		accessToken,
+		error,
+	};
+};

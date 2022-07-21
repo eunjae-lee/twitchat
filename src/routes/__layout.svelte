@@ -1,6 +1,10 @@
 <script>
 	import * as Sentry from '@sentry/browser';
 	import { BrowserTracing } from '@sentry/tracing';
+	import { session } from '$app/stores';
+	import { supabaseClient } from '$lib/db';
+	import { SupaAuthHelper } from '@supabase/auth-helpers-svelte';
+
 	import '../app.css';
 
 	Sentry.init({
@@ -14,4 +18,6 @@
 	});
 </script>
 
-<slot />
+<SupaAuthHelper {supabaseClient} {session}>
+	<slot />
+</SupaAuthHelper>
