@@ -1,5 +1,2 @@
-import { getContext } from 'svelte';
-
-export function test() {
-	return getContext('lang');
-}
+export * from './helpers';
+export * from './landing';
