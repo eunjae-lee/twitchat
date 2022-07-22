@@ -7,6 +7,7 @@ declare namespace App {
 	interface UserSession {
 		user: import('@supabase/supabase-js').User;
 		accessToken?: string;
+		acceptKorean: boolean;
 	}
 
 	interface Locals extends UserSession {

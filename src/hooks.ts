@@ -19,16 +19,23 @@ export async function handleError({ error }: Parameters<HandleError>[0]) {
 }
 
 export const handle: Handle = sequence(
+	function checkLanguage({ event, resolve }) {
+		// `en-GB,en-US;q=0.9,en;q=0.8,ko;q=0.7,fr;q=0.6`
+		const acceptKorean = event.request.headers.get('accept-language')?.includes('ko');
+		event.locals.acceptKorean = acceptKorean ?? false;
+		return resolve(event);
+	},
 	...handleAuth({
 		logout: { returnTo: '/auth/signin' },
 	})
 );
 
 export const getSession: GetSession = async (event: RequestEvent) => {
-	const { user, accessToken, error } = event.locals;
+	const { user, accessToken, error, acceptKorean } = event.locals;
 	return {
 		user,
 		accessToken,
 		error,
+		acceptKorean,
 	};
 };
