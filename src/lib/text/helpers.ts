@@ -1,18 +1,18 @@
 import { getContext } from 'svelte';
 
 type Lang = 'ko' | 'en';
-type Dictionary = {
-	ko: Record<string, string>;
-	en: Record<string, string>;
+type Dictionary<TKey extends string> = {
+	ko: Record<TKey, string>;
+	en: Record<TKey, string>;
 };
 
-function getText(dictionary: Dictionary, key: string) {
+const getText = <TKey extends string>(dictionary: Dictionary<TKey>, key: TKey) => {
 	const lang = getContext('lang') as Lang;
 	return dictionary[lang][key];
-}
+};
 
-function getter(dictionary: Dictionary) {
-	return (key: string) => getText(dictionary, key);
-}
+const getter = <TKey extends string>(dictionary: Dictionary<TKey>) => {
+	return (key: TKey) => getText(dictionary, key);
+};
 
 export { getter };
