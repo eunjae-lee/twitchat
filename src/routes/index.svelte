@@ -1,3 +1,11 @@
+<script context="module" lang="ts">
+	export function load({ params, fetch, session, stuff }) {
+		console.log('# acceptKorean?', session.acceptKorean);
+
+		return {};
+	}
+</script>
+
 <div class="container mx-auto">
 	<div class="navbar bg-base-100">
 		<div class="navbar-start">
