@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { test } from '$lib/text';
-
-	console.log('# lang', test());
+	import { getter, landing } from '$lib/text';
+	const t = getter(landing);
 </script>
 
 <div class="container mx-auto">
@@ -9,11 +8,11 @@
 		<div class="navbar-start">
 			<a href="/" class="btn btn-ghost normal-case text-xl">
 				<img src="/logo.png" alt="TwitChat logo" class="w-8" />
-				<span class="ml-2">TwitChat</span>
+				<span class="ml-2">{t('title')}</span>
 			</a>
 		</div>
 		<div class="navbar-end">
-			<a href="/new" class="btn btn-primary">New Chat</a>
+			<a href="/new" class="btn btn-primary">{t('newChat')}</a>
 		</div>
 	</div>
 
@@ -25,7 +24,7 @@
 					Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
 					exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
 				</p>
-				<button class="btn btn-primary">New Chat</button>
+				<button class="btn btn-primary">{t('newChat')}</button>
 			</div>
 		</div>
 	</div>
