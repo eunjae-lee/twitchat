@@ -1,9 +1,7 @@
-<script context="module" lang="ts">
-	export function load({ params, fetch, session, stuff }) {
-		console.log('# acceptKorean?', session.acceptKorean);
+<script lang="ts">
+	import { test } from '$lib/text';
 
-		return {};
-	}
+	console.log('# lang', test());
 </script>
 
 <div class="container mx-auto">

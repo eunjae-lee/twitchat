@@ -1,11 +1,27 @@
-<script>
+<script context="module" lang="ts">
+	import type { LoadEvent } from '@sveltejs/kit';
+
+	export function load({ session }: LoadEvent) {
+		return {
+			props: {
+				lang: session.acceptKorean ? 'ko' : 'en',
+			},
+		};
+	}
+</script>
+
+<script lang="ts">
 	import * as Sentry from '@sentry/browser';
 	import { BrowserTracing } from '@sentry/tracing';
 	import { session } from '$app/stores';
 	import { supabaseClient } from '$lib/db';
 	import { SupaAuthHelper } from '@supabase/auth-helpers-svelte';
+	import { setContext } from 'svelte';
 
 	import '../app.css';
+
+	export let lang: 'ko' | 'en';
+	setContext('lang', lang);
 
 	Sentry.init({
 		dsn: 'https://f86c9a88f7de4626aa0f5f9295c10417@o401874.ingest.sentry.io/6591315',
