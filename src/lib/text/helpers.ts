@@ -15,7 +15,10 @@ const getter = <TKey extends string>(dictionary: Dictionary<TKey>) => {
 	return (key: TKey) => getText(dictionary, key);
 };
 
-const merge = <TKey1 extends string, TKey2 extends string>(dic1: Dictionary<TKey1>, dic2: Dictionary<TKey2>) => {
+const merge = <TKey1 extends string, TKey2 extends string>(
+	dic1: Dictionary<TKey1>,
+	dic2: Dictionary<TKey2>
+) => {
 	return {
 		en: {
 			...dic1.en,
@@ -23,9 +26,9 @@ const merge = <TKey1 extends string, TKey2 extends string>(dic1: Dictionary<TKey
 		},
 		ko: {
 			...dic1.ko,
-			...dic2.ko
-		}
-	}
+			...dic2.ko,
+		},
+	};
 };
 
 export { getter, merge };

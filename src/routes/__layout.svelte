@@ -18,14 +18,14 @@
 	import type { Lang } from '$lib/types';
 	import { SupaAuthHelper } from '@supabase/auth-helpers-svelte';
 	import { setContext } from 'svelte';
-	import { getter, common } from '$lib/text'
+	import { getter, common } from '$lib/text';
 
 	import '../app.css';
 
 	export let lang: Lang;
 	setContext('lang', lang);
 
-	const t = getter(common)
+	const t = getter(common);
 
 	Sentry.init({
 		dsn: 'https://f86c9a88f7de4626aa0f5f9295c10417@o401874.ingest.sentry.io/6591315',
