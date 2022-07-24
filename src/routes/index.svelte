@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getter, landing } from '$lib/text';
-	const t = getter(landing);
+	import { getter, merge, landing, common } from '$lib/text';
+	const t = getter(merge(landing, common));
 </script>
 
 <div class="container mx-auto">
