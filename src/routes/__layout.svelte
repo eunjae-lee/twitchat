@@ -4,7 +4,7 @@
 	export function load({ session }: LoadEvent) {
 		return {
 			props: {
-				lang: session.acceptKorean ? 'ko' : 'en',
+				lang: session.lang,
 			},
 		};
 	}
@@ -15,12 +15,13 @@
 	import { BrowserTracing } from '@sentry/tracing';
 	import { session } from '$app/stores';
 	import { supabaseClient } from '$lib/db';
+	import type { Lang } from '$lib/types';
 	import { SupaAuthHelper } from '@supabase/auth-helpers-svelte';
 	import { setContext } from 'svelte';
 
 	import '../app.css';
 
-	export let lang: 'ko' | 'en';
+	export let lang: Lang;
 	setContext('lang', lang);
 
 	Sentry.init({

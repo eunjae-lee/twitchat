@@ -22,7 +22,7 @@ export const handle: Handle = sequence(
 	function checkLanguage({ event, resolve }) {
 		// `en-GB,en-US;q=0.9,en;q=0.8,ko;q=0.7,fr;q=0.6`
 		const acceptKorean = event.request.headers.get('accept-language')?.includes('ko');
-		event.locals.acceptKorean = acceptKorean ?? false;
+		event.locals.lang = acceptKorean === true ? 'ko' : 'en';
 		return resolve(event);
 	},
 	...handleAuth({
@@ -31,11 +31,11 @@ export const handle: Handle = sequence(
 );
 
 export const getSession: GetSession = async (event: RequestEvent) => {
-	const { user, accessToken, error, acceptKorean } = event.locals;
+	const { user, accessToken, error, lang } = event.locals;
 	return {
 		user,
 		accessToken,
 		error,
-		acceptKorean,
+		lang,
 	};
 };
