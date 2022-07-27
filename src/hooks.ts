@@ -26,7 +26,7 @@ export const handle: Handle = sequence(
 		return resolve(event);
 	},
 	...handleAuth({
-		logout: { returnTo: '/auth/signin' },
+		logout: { returnTo: '/sign_in' },
 	})
 );
 

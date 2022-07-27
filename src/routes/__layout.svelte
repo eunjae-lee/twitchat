@@ -14,7 +14,7 @@
 	import * as Sentry from '@sentry/browser';
 	import { BrowserTracing } from '@sentry/tracing';
 	import { session } from '$app/stores';
-	import { supabaseClient } from '$lib/db';
+	import { supabase } from '$lib/db';
 	import type { Lang } from '$lib/types';
 	import { SupaAuthHelper } from '@supabase/auth-helpers-svelte';
 	import { setContext } from 'svelte';
@@ -42,6 +42,6 @@
 	<title>{t('title')}</title>
 </svelte:head>
 
-<SupaAuthHelper {supabaseClient} {session}>
+<SupaAuthHelper supabaseClient={supabase} {session}>
 	<slot />
 </SupaAuthHelper>

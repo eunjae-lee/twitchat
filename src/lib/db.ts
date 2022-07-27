@@ -8,6 +8,6 @@ const result = createSupabaseClient(
 
 // result.supabaseClient is undefined only when the two parameters are not given above.
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const supabaseClient = result.supabaseClient!;
+const supabase = result.supabaseClient!;
 
-export { supabaseClient };
+export { supabase };
