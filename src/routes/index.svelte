@@ -21,7 +21,7 @@
 			</a>
 		</div>
 		<div class="navbar-end">
-			<a href="/new" class="btn btn-primary">{t('newChat')}</a>
+			<a href="/new" class="btn btn-sm btn-primary">{t('newChat')}</a>
 		</div>
 	</div>
 
