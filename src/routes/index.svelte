@@ -1,6 +1,15 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { getter, merge, landing, common } from '$lib/text';
 	const t = getter(merge(landing, common));
+
+	if (typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=')) {
+		const redirectTo = localStorage.getItem('redirect_to');
+		localStorage.removeItem('redirect_to');
+		if (redirectTo && redirectTo.startsWith('/')) {
+			goto(redirectTo);
+		}
+	}
 </script>
 
 <div class="container mx-auto">

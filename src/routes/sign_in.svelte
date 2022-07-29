@@ -5,9 +5,16 @@
 	const t = getter(signIn);
 
 	async function signInWithTwitter() {
-		const { user, session, error } = await supabase.auth.signIn({
+		await supabase.auth.signIn({
 			provider: 'twitter',
 		});
+	}
+
+	if (typeof window !== 'undefined') {
+		const redirectTo = new URLSearchParams(window.location.search).get('redirect_to');
+		if (redirectTo && redirectTo.startsWith('/')) {
+			localStorage.setItem('redirect_to', redirectTo);
+		}
 	}
 </script>
 
