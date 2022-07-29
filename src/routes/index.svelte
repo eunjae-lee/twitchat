@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { getter, merge, landing, common } from '$lib/text';
-	const t = getter(merge(landing, common));
+	import { getter, landing, getSiteTitle } from '$lib/text';
+	const t = getter(landing);
 
 	if (typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=')) {
-		const redirectTo = localStorage.getItem('redirect_to');
-		localStorage.removeItem('redirect_to');
+		const redirectTo = sessionStorage.getItem('redirect_to');
+		sessionStorage.removeItem('redirect_to');
 		if (redirectTo && redirectTo.startsWith('/')) {
 			goto(redirectTo);
 		}
@@ -13,11 +13,11 @@
 </script>
 
 <div class="container mx-auto">
-	<div class="navbar bg-base-100">
+	<div class="navbar">
 		<div class="navbar-start">
 			<a href="/" class="btn btn-ghost normal-case text-xl">
 				<img src="/logo.png" alt="TwitChat logo" class="w-8" />
-				<span class="ml-2">{t('title')}</span>
+				<span class="ml-2">{getSiteTitle()}</span>
 			</a>
 		</div>
 		<div class="navbar-end">

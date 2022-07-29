@@ -10,4 +10,6 @@ const result = createSupabaseClient(
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const supabase = result.supabaseClient!;
 
-export { supabase };
+const isSignedIn = () => Boolean(supabase.auth.user());
+
+export { supabase, isSignedIn };

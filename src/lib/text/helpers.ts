@@ -1,9 +1,14 @@
 import { getContext } from 'svelte';
+import { common } from './common';
 
 type Lang = 'ko' | 'en';
 type Dictionary<TKey extends string> = {
 	ko: Record<TKey, string>;
 	en: Record<TKey, string>;
+};
+
+const getSiteTitle = () => {
+	return getText(common, 'title');
 };
 
 const getText = <TKey extends string>(dictionary: Dictionary<TKey>, key: TKey) => {
@@ -31,4 +36,4 @@ const merge = <TKey1 extends string, TKey2 extends string>(
 	};
 };
 
-export { getter, merge };
+export { getSiteTitle, getter, merge };
