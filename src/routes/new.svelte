@@ -6,7 +6,7 @@
 		setRedirectionAfterSignIn,
 		storePayloadToCreateRoomAfterSignIn,
 	} from '$lib/auth';
-	import { createRoom, isSignedIn, supabase } from '$lib/db';
+	import { createRoom, supabase } from '$lib/db';
 	import { getSiteTitle, getter, newRoom } from '$lib/text';
 	const t = getter(newRoom);
 
@@ -16,9 +16,8 @@
 	async function onSubmit() {
 		submitting = true;
 
-		if (isSignedIn()) {
-			// FIXME: why doesn't it have a session even when it's already logged in?
-			const room = await createRoom({ title });
+		if ($session.user?.id) {
+			const room = await createRoom({ title, user_id: $session.user!.id });
 			goto(`/chat/${room.slug}`);
 		} else {
 			storePayloadToCreateRoomAfterSignIn({ title });

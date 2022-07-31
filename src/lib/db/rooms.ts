@@ -1,11 +1,11 @@
 import type { Room } from '$lib/types';
-import { supabase, userId } from './client';
+import { supabase } from './client';
 
-export async function createRoom({ title }: Pick<Room, 'title'>) {
+export async function createRoom({ title, user_id }: Pick<Room, 'title' | 'user_id'>) {
 	const { data } = await supabase.from<Room>('rooms').insert([
 		{
 			title,
-			user_id: userId(),
+			user_id,
 		},
 	]);
 	if (data === null) {
