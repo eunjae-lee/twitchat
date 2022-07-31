@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { popRedirectionAfterSignIn } from '$lib/auth';
 	import { getter, landing, getSiteTitle } from '$lib/text';
 	const t = getter(landing);
 
 	if (typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=')) {
-		const redirectTo = sessionStorage.getItem('redirect_to');
-		sessionStorage.removeItem('redirect_to');
+		const redirectTo = popRedirectionAfterSignIn();
 		if (redirectTo && redirectTo.startsWith('/')) {
 			goto(redirectTo);
 		}

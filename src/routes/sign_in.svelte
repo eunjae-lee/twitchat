@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { setRedirectionAfterSignIn } from '$lib/auth';
+
 	import { supabase } from '$lib/db';
 
 	import { getter, signIn } from '$lib/text';
@@ -17,7 +19,7 @@
 	onMount(() => {
 		const redirectTo = new URLSearchParams(window.location.search).get('redirect_to');
 		if (redirectTo && redirectTo.startsWith('/')) {
-			sessionStorage.setItem('redirect_to', redirectTo);
+			setRedirectionAfterSignIn(redirectTo);
 		}
 	});
 </script>

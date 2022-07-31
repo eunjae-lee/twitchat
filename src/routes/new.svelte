@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { session } from '$app/stores';
+	import {
+		getPayloadToCreateRoomAfterSignIn,
+		setRedirectionAfterSignIn,
+		storePayloadToCreateRoomAfterSignIn,
+	} from '$lib/auth';
 	import { createRoom, isSignedIn, supabase } from '$lib/db';
 	import { getSiteTitle, getter, newRoom } from '$lib/text';
 	const t = getter(newRoom);
@@ -8,19 +13,17 @@
 	let title: string;
 	let submitting: boolean;
 
-	const KEY = 'create_room_on_sign_in';
-
 	async function onSubmit() {
 		submitting = true;
 
-		console.log('# hey!!', isSignedIn());
 		if (isSignedIn()) {
 			// FIXME: why doesn't it have a session even when it's already logged in?
 			const room = await createRoom({ title });
 			goto(`/chat/${room.slug}`);
 		} else {
-			sessionStorage.setItem(KEY, JSON.stringify({ title }));
-			sessionStorage.setItem('redirect_to', '/new');
+			storePayloadToCreateRoomAfterSignIn({ title });
+			setRedirectionAfterSignIn('/new');
+
 			await supabase.auth.signIn({
 				provider: 'twitter',
 			});
@@ -29,14 +32,7 @@
 
 	$: {
 		if ($session.user && $session.user.id) {
-			let json;
-			try {
-				const payload = sessionStorage.getItem(KEY) as string;
-				sessionStorage.removeItem(KEY);
-				json = JSON.parse(payload);
-			} catch (_err) {
-				// ignore this
-			}
+			const json = getPayloadToCreateRoomAfterSignIn();
 
 			if (json) {
 				title = json.title;
