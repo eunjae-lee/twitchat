@@ -4,6 +4,7 @@
 	"scripts": {
 		"dev": "vite dev --port 3000",
 		"build": "vite build",
+		"build:types": "openapi-typescript https://kqoobibtnfszgvcugvud.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtxb29iaWJ0bmZzemd2Y3VndnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTg0MTYxODUsImV4cCI6MTk3Mzk5MjE4NX0.M-JjAP6FN2CLF2tcpbHXTGPH3C88KlkDuYHXsfjAsc4 --output src/lib/types/supabase.ts",
 		"package": "svelte-kit package",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync",
@@ -27,6 +28,7 @@
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"jsdom": "^20.0.0",
+		"openapi-typescript": "5.4.1",
 		"postcss": "8.4.14",
 		"prettier": "^2.6.2",
 		"prettier-plugin-svelte": "^2.7.0",
