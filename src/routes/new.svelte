@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { session } from '$app/stores';
 	import {
-		getPayloadToCreateRoomAfterSignIn,
+		popPayloadToCreateRoomAfterSignIn,
 		setRedirectionAfterSignIn,
 		storePayloadToCreateRoomAfterSignIn,
 	} from '$lib/auth';
@@ -30,13 +30,14 @@
 	}
 
 	$: {
+		// TODO: fix session.user type!
 		if ($session.user && $session.user.id) {
-			const json = getPayloadToCreateRoomAfterSignIn();
+			const json = popPayloadToCreateRoomAfterSignIn();
 
 			if (json) {
 				title = json.title;
 				submitting = true;
-				createRoom({ title }).then((room) => {
+				createRoom({ title, user_id: $session.user.id }).then((room) => {
 					goto(`/chat/${room.slug}`);
 				});
 			}

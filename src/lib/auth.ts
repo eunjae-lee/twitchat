@@ -9,7 +9,7 @@ export function storePayloadToCreateRoomAfterSignIn({
 	sessionStorage.setItem(KEY_PAYLOAD_ROOM, JSON.stringify({ title }));
 }
 
-export function getPayloadToCreateRoomAfterSignIn() {
+export function popPayloadToCreateRoomAfterSignIn() {
 	let json;
 	try {
 		const payload = sessionStorage.getItem(KEY_PAYLOAD_ROOM) as string;
