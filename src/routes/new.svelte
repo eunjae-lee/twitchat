@@ -30,7 +30,6 @@
 	}
 
 	$: {
-		// TODO: fix session.user type!
 		if ($session.user && $session.user.id) {
 			const json = popPayloadToCreateRoomAfterSignIn();
 
