@@ -21,7 +21,7 @@
 			</a>
 		</div>
 		<div class="navbar-end">
-			<a href="/new" class="btn btn-sm btn-primary">{t('newChat')}</a>
+			<a sveltekit:prefetch href="/new" class="btn btn-sm btn-primary">{t('newChat')}</a>
 		</div>
 	</div>
 
@@ -33,7 +33,7 @@
 					Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
 					exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
 				</p>
-				<button class="btn btn-primary">{t('newChat')}</button>
+				<a sveltekit:prefetch href="/new" class="btn btn-primary">{t('newChat')}</a>
 			</div>
 		</div>
 	</div>
