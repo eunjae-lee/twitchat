@@ -1,13 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { session } from '$app/stores';
 	import { popRedirectionAfterSignIn } from '$lib/auth';
 	import { getter, landing, getSiteTitle } from '$lib/text';
 	const t = getter(landing);
 
-	if (typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=')) {
-		const redirectTo = popRedirectionAfterSignIn();
-		if (redirectTo && redirectTo.startsWith('/')) {
-			goto(redirectTo);
+	$: {
+		const sessionExists = $session.user && $session.user.id;
+		const beingRedirectedFromTwitter =
+			typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=');
+
+		if (sessionExists && beingRedirectedFromTwitter) {
+			const redirectTo = popRedirectionAfterSignIn();
+			if (redirectTo && redirectTo.startsWith('/')) {
+				goto(redirectTo);
+			}
 		}
 	}
 </script>
