@@ -40,22 +40,6 @@ returns boolean as $$
 $$ language sql;
 
 
--- create or replace function is_participating_by_slug(param_slug text)
--- returns boolean as $$
---   select exists
---   (
---     select 1
---     from participations
---     inner join rooms
---     on participations.room_id = rooms.id
---     where
---       rooms.slug = param_slug
---       and participations.user_id = auth.uid()
---       and (participations.role = 'admin' or participations.role = 'user')
---       and participations.status = 'granted'
---   );
--- $$ language sql;
-
 create view participations_with_slug as
 select
   rooms.slug,
