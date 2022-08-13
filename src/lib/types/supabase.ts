@@ -21,6 +21,7 @@ export interface paths {
           user_id?: parameters["rowFilter.participations.user_id"];
           created_ts?: parameters["rowFilter.participations.created_ts"];
           role?: parameters["rowFilter.participations.role"];
+          status?: parameters["rowFilter.participations.status"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -76,6 +77,7 @@ export interface paths {
           user_id?: parameters["rowFilter.participations.user_id"];
           created_ts?: parameters["rowFilter.participations.created_ts"];
           role?: parameters["rowFilter.participations.role"];
+          status?: parameters["rowFilter.participations.status"];
         };
         header: {
           /** Preference */
@@ -95,10 +97,148 @@ export interface paths {
           user_id?: parameters["rowFilter.participations.user_id"];
           created_ts?: parameters["rowFilter.participations.created_ts"];
           role?: parameters["rowFilter.participations.role"];
+          status?: parameters["rowFilter.participations.status"];
         };
         body: {
           /** participations */
           participations?: definitions["participations"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/participations_with_slug": {
+    get: {
+      parameters: {
+        query: {
+          slug?: parameters["rowFilter.participations_with_slug.slug"];
+          room_id?: parameters["rowFilter.participations_with_slug.room_id"];
+          user_id?: parameters["rowFilter.participations_with_slug.user_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["participations_with_slug"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+  };
+  "/messages": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          room_id?: parameters["rowFilter.messages.room_id"];
+          user_id?: parameters["rowFilter.messages.user_id"];
+          created_ts?: parameters["rowFilter.messages.created_ts"];
+          content?: parameters["rowFilter.messages.content"];
+          type?: parameters["rowFilter.messages.type"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["messages"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** messages */
+          messages?: definitions["messages"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          room_id?: parameters["rowFilter.messages.room_id"];
+          user_id?: parameters["rowFilter.messages.user_id"];
+          created_ts?: parameters["rowFilter.messages.created_ts"];
+          content?: parameters["rowFilter.messages.content"];
+          type?: parameters["rowFilter.messages.type"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          room_id?: parameters["rowFilter.messages.room_id"];
+          user_id?: parameters["rowFilter.messages.user_id"];
+          created_ts?: parameters["rowFilter.messages.created_ts"];
+          content?: parameters["rowFilter.messages.content"];
+          type?: parameters["rowFilter.messages.type"];
+        };
+        body: {
+          /** messages */
+          messages?: definitions["messages"];
         };
         header: {
           /** Preference */
@@ -254,6 +394,46 @@ export interface paths {
       };
     };
   };
+  "/rpc/is_participating": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: uuid */
+            param_room_id: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/participate_room": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: text */
+            param_slug: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
 }
 
 export interface definitions {
@@ -268,10 +448,13 @@ export interface definitions {
     /**
      * Format: uuid
      * @description Note:
-     * This is a Foreign Key to `rooms.id`.<fk table='rooms' column='id'/>
+     * This is a Foreign Key to `participations_with_slug.room_id`.<fk table='participations_with_slug' column='room_id'/>
      */
     room_id: string;
-    /** Format: uuid */
+    /**
+     * Format: uuid
+     * @default auth.uid()
+     */
     user_id: string;
     /**
      * Format: timestamp with time zone
@@ -280,6 +463,55 @@ export interface definitions {
     created_ts?: string;
     /** Format: text */
     role: string;
+    /**
+     * Format: text
+     * @default granted
+     */
+    status: string;
+  };
+  participations_with_slug: {
+    /** Format: text */
+    slug?: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    room_id?: string;
+    /** Format: uuid */
+    user_id?: string;
+  };
+  messages: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `participations_with_slug.room_id`.<fk table='participations_with_slug' column='room_id'/>
+     */
+    room_id: string;
+    /**
+     * Format: uuid
+     * @default auth.uid()
+     */
+    user_id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_ts?: string;
+    /** Format: text */
+    content?: string;
+    /**
+     * Format: text
+     * @default text
+     */
+    type?: string;
   };
   rooms: {
     /**
@@ -289,7 +521,10 @@ export interface definitions {
      * @default extensions.uuid_generate_v4()
      */
     id: string;
-    /** Format: uuid */
+    /**
+     * Format: uuid
+     * @default auth.uid()
+     */
     user_id: string;
     /** Format: text */
     title: string;
@@ -371,6 +606,30 @@ export interface parameters {
   "rowFilter.participations.created_ts": string;
   /** Format: text */
   "rowFilter.participations.role": string;
+  /** Format: text */
+  "rowFilter.participations.status": string;
+  /** @description participations_with_slug */
+  "body.participations_with_slug": definitions["participations_with_slug"];
+  /** Format: text */
+  "rowFilter.participations_with_slug.slug": string;
+  /** Format: uuid */
+  "rowFilter.participations_with_slug.room_id": string;
+  /** Format: uuid */
+  "rowFilter.participations_with_slug.user_id": string;
+  /** @description messages */
+  "body.messages": definitions["messages"];
+  /** Format: uuid */
+  "rowFilter.messages.id": string;
+  /** Format: uuid */
+  "rowFilter.messages.room_id": string;
+  /** Format: uuid */
+  "rowFilter.messages.user_id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.messages.created_ts": string;
+  /** Format: text */
+  "rowFilter.messages.content": string;
+  /** Format: text */
+  "rowFilter.messages.type": string;
   /** @description rooms */
   "body.rooms": definitions["rooms"];
   /** Format: uuid */
