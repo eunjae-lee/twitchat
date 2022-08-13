@@ -50,7 +50,7 @@ select
 from participations
 inner join rooms on participations.room_id = rooms.id;
 
-create or replace function particiate_room(param_slug text)
+create or replace function participate_room(param_slug text)
 returns void as $$
   declare
     room_id uuid;

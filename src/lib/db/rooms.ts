@@ -35,5 +35,5 @@ export async function isParticipating({
 }
 
 export async function participate({ slug }: { slug: string }): Promise<void> {
-	await supabase.rpc('particiate_room', { param_slug: slug });
+	await supabase.rpc('participate_room', { param_slug: slug });
 }
