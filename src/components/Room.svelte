@@ -17,8 +17,7 @@
 		});
 
 		subscription = supabase
-			// .from<Message>(`messages:room_id=eq.${room.id}`)
-			.from<Message>(`messages`)
+			.from<Message>(`messages:room_id=eq.${room.id}`)
 			.on('INSERT', (payload) => {
 				messages = [...messages, payload.new];
 			})
