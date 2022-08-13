@@ -23,9 +23,12 @@
 			storePayloadToCreateRoomAfterSignIn({ title });
 			setRedirectionAfterSignIn('/new');
 
-			await supabase.auth.signIn({
-				provider: 'twitter',
-			});
+			await supabase.auth.signIn(
+				{
+					provider: 'twitter',
+				},
+				{ redirectTo: window.location.origin }
+			);
 		}
 	}
 

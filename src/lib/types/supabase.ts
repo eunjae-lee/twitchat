@@ -121,6 +121,8 @@ export interface paths {
           slug?: parameters["rowFilter.rooms.slug"];
           created_ts?: parameters["rowFilter.rooms.created_ts"];
           updated_ts?: parameters["rowFilter.rooms.updated_ts"];
+          begin_ts?: parameters["rowFilter.rooms.begin_ts"];
+          end_ts?: parameters["rowFilter.rooms.end_ts"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -177,6 +179,8 @@ export interface paths {
           slug?: parameters["rowFilter.rooms.slug"];
           created_ts?: parameters["rowFilter.rooms.created_ts"];
           updated_ts?: parameters["rowFilter.rooms.updated_ts"];
+          begin_ts?: parameters["rowFilter.rooms.begin_ts"];
+          end_ts?: parameters["rowFilter.rooms.end_ts"];
         };
         header: {
           /** Preference */
@@ -197,6 +201,8 @@ export interface paths {
           slug?: parameters["rowFilter.rooms.slug"];
           created_ts?: parameters["rowFilter.rooms.created_ts"];
           updated_ts?: parameters["rowFilter.rooms.updated_ts"];
+          begin_ts?: parameters["rowFilter.rooms.begin_ts"];
+          end_ts?: parameters["rowFilter.rooms.end_ts"];
         };
         body: {
           /** rooms */
@@ -245,105 +251,6 @@ export interface paths {
         };
         /** Partial Content */
         206: unknown;
-      };
-    };
-  };
-  "/schedules": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.schedules.id"];
-          room_id?: parameters["rowFilter.schedules.room_id"];
-          user_id?: parameters["rowFilter.schedules.user_id"];
-          begin_ts?: parameters["rowFilter.schedules.begin_ts"];
-          end_ts?: parameters["rowFilter.schedules.end_ts"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["schedules"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** schedules */
-          schedules?: definitions["schedules"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.schedules.id"];
-          room_id?: parameters["rowFilter.schedules.room_id"];
-          user_id?: parameters["rowFilter.schedules.user_id"];
-          begin_ts?: parameters["rowFilter.schedules.begin_ts"];
-          end_ts?: parameters["rowFilter.schedules.end_ts"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.schedules.id"];
-          room_id?: parameters["rowFilter.schedules.room_id"];
-          user_id?: parameters["rowFilter.schedules.user_id"];
-          begin_ts?: parameters["rowFilter.schedules.begin_ts"];
-          end_ts?: parameters["rowFilter.schedules.end_ts"];
-        };
-        body: {
-          /** schedules */
-          schedules?: definitions["schedules"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
       };
     };
   };
@@ -398,6 +305,16 @@ export interface definitions {
     created_ts?: string;
     /** Format: timestamp with time zone */
     updated_ts?: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    begin_ts?: string;
+    /**
+     * Format: timestamp with time zone
+     * @default (now() + '02:00:00'::interval)
+     */
+    end_ts?: string;
   };
   check_participation: {
     /** Format: uuid */
@@ -406,27 +323,6 @@ export interface definitions {
     role?: string;
     /** Format: text */
     slug?: string;
-  };
-  schedules: {
-    /**
-     * Format: uuid
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     * @default extensions.uuid_generate_v4()
-     */
-    id: string;
-    /**
-     * Format: uuid
-     * @description Note:
-     * This is a Foreign Key to `rooms.id`.<fk table='rooms' column='id'/>
-     */
-    room_id: string;
-    /** Format: uuid */
-    user_id: string;
-    /** Format: timestamp with time zone */
-    begin_ts?: string;
-    /** Format: timestamp with time zone */
-    end_ts?: string;
   };
 }
 
@@ -489,6 +385,10 @@ export interface parameters {
   "rowFilter.rooms.created_ts": string;
   /** Format: timestamp with time zone */
   "rowFilter.rooms.updated_ts": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.rooms.begin_ts": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.rooms.end_ts": string;
   /** @description check_participation */
   "body.check_participation": definitions["check_participation"];
   /** Format: uuid */
@@ -497,18 +397,6 @@ export interface parameters {
   "rowFilter.check_participation.role": string;
   /** Format: text */
   "rowFilter.check_participation.slug": string;
-  /** @description schedules */
-  "body.schedules": definitions["schedules"];
-  /** Format: uuid */
-  "rowFilter.schedules.id": string;
-  /** Format: uuid */
-  "rowFilter.schedules.room_id": string;
-  /** Format: uuid */
-  "rowFilter.schedules.user_id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.schedules.begin_ts": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.schedules.end_ts": string;
 }
 
 export interface operations {}

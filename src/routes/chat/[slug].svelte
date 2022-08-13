@@ -11,14 +11,18 @@
 </script>
 
 <script lang="ts">
-	import { isParticipating } from '$lib/db';
+	import { isParticipating, participate } from '$lib/db';
 	import { session } from '$app/stores';
 
 	export let slug: string;
-	let view: 'join' | 'chat' | null;
+	const NEED_TO_JOIN = 'need_to_join';
+	const JOINED = 'joined';
+	const LOADING = 'loading';
+
+	let status: 'need_to_join' | 'joined' | 'loading' = LOADING;
 
 	async function checkParticipation() {
-		view = (await isParticipating({ slug, user_id: $session.user.id })) ? 'chat' : 'join';
+		status = (await isParticipating({ slug, user_id: $session.user.id })) ? JOINED : NEED_TO_JOIN;
 	}
 
 	$: {
@@ -26,13 +30,19 @@
 			checkParticipation();
 		}
 	}
+
+	async function join() {
+		await participate({ slug });
+		await checkParticipation();
+	}
 </script>
 
-{#if view === 'join'}
+{#if status === NEED_TO_JOIN}
 	Do you want to join this room?
-{:else if view === 'chat'}
+	<button type="button" on:click={join}>Join</button>
+{:else if status === JOINED}
 	chat room here
-{:else}
+{:else if status === LOADING}
 	<svg
 		class="animate-spin h-8 w-8"
 		xmlns="http://www.w3.org/2000/svg"
