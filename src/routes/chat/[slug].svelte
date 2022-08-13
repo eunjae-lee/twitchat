@@ -13,6 +13,7 @@
 <script lang="ts">
 	import { isParticipating, participate } from '$lib/db';
 	import { session } from '$app/stores';
+	import Room from '../../components/Room.svelte';
 
 	export let slug: string;
 	const NEED_TO_JOIN = 'need_to_join';
@@ -41,7 +42,7 @@
 	Do you want to join this room?
 	<button type="button" on:click={join}>Join</button>
 {:else if status === JOINED}
-	chat room here
+	<Room {slug} />
 {:else if status === LOADING}
 	<svg
 		class="animate-spin h-8 w-8"

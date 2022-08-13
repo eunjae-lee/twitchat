@@ -23,10 +23,55 @@ create table participations (
 
   UNIQUE(room_id, user_id)
 );
+alter table participations add column status text not null default 'granted';
+-- TODO: protect `status`!
+
+create or replace function is_participating(param_room_id uuid)
+returns boolean as $$
+  select exists
+    (
+      select 1
+      from participations
+      where room_id = param_room_id
+        and user_id = auth.uid()
+        and (role = 'admin' or role = 'user')
+        and status = 'granted'
+    );
+$$ language sql;
+
+
+-- create or replace function is_participating_by_slug(param_slug text)
+-- returns boolean as $$
+--   select exists
+--   (
+--     select 1
+--     from participations
+--     inner join rooms
+--     on participations.room_id = rooms.id
+--     where
+--       rooms.slug = param_slug
+--       and participations.user_id = auth.uid()
+--       and (participations.role = 'admin' or participations.role = 'user')
+--       and participations.status = 'granted'
+--   );
+-- $$ language sql;
+
+create view participations_with_slug as
+select
+  rooms.slug,
+  rooms.id as room_id,
+  participations.user_id as user_id
+from participations
+inner join rooms
+on participations.room_id = rooms.id
+where
+  (participations.role = 'admin' or participations.role = 'user')
+  and participations.status = 'granted';
+
 -- TODO: protect `role`!
 alter table participations enable row level security;
 create policy "Can create own participations" on participations for insert with check (auth.uid() = user_id);
-create policy "Can view own participations." on participations for select using (auth.uid() = user_id);
+create policy "Can view own participations." on participations for select using (true);
 create policy "Can update own participations." on participations for update using (auth.uid() = user_id);
 
 create function public.participate_as_admin()
@@ -42,14 +87,6 @@ create trigger on_room_created2
   for each row execute procedure public.participate_as_admin();
 
 
-create view check_participation as
-select 
-  participations.user_id,
-  participations.role,
-  rooms.slug
-from participations
-inner join rooms on participations.room_id = rooms.id;
-
 create or replace function participate_room(param_slug text)
 returns void as $$
   declare
@@ -63,3 +100,21 @@ returns void as $$
     values (room_id, auth.uid(), 'user');
   end;
 $$ language plpgsql;
+
+
+create table messages (
+  id uuid not null primary key default uuid_generate_v4(),
+  room_id uuid references rooms not null,
+  user_id uuid references auth.users not null default auth.uid(),
+  created_ts TIMESTAMP WITH TIME ZONE default now(),
+  
+  content text,
+  type text default 'text' -- 'text' | 'emoji' | ...
+);
+alter table rooms enable row level security;
+create policy "Can create own messages." on messages for insert with check (
+  auth.uid() = user_id and is_participating(room_id)
+);
+create policy "Can view any messages in participating rooms." on messages for select using (
+  is_participating(room_id)
+);

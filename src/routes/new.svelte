@@ -17,7 +17,7 @@
 		submitting = true;
 
 		if ($session.user?.id) {
-			const room = await createRoom({ title, user_id: $session.user!.id });
+			const room = await createRoom({ title });
 			goto(`/chat/${room.slug}`);
 		} else {
 			storePayloadToCreateRoomAfterSignIn({ title });
@@ -39,7 +39,7 @@
 			if (json) {
 				title = json.title;
 				submitting = true;
-				createRoom({ title, user_id: $session.user.id }).then((room) => {
+				createRoom({ title }).then((room) => {
 					goto(`/chat/${room.slug}`);
 				});
 			}
