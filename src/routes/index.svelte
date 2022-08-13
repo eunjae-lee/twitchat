@@ -5,10 +5,11 @@
 	import { getter, landing, getSiteTitle } from '$lib/text';
 	const t = getter(landing);
 
+	const beingRedirectedFromTwitter =
+		typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=');
+
 	$: {
 		const sessionExists = $session.user && $session.user.id;
-		const beingRedirectedFromTwitter =
-			typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=');
 
 		if (sessionExists && beingRedirectedFromTwitter) {
 			const redirectTo = popRedirectionAfterSignIn();
