@@ -12,6 +12,105 @@ export interface paths {
       };
     };
   };
+  "/participations": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.participations.id"];
+          room_id?: parameters["rowFilter.participations.room_id"];
+          user_id?: parameters["rowFilter.participations.user_id"];
+          created_ts?: parameters["rowFilter.participations.created_ts"];
+          role?: parameters["rowFilter.participations.role"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["participations"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** participations */
+          participations?: definitions["participations"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.participations.id"];
+          room_id?: parameters["rowFilter.participations.room_id"];
+          user_id?: parameters["rowFilter.participations.user_id"];
+          created_ts?: parameters["rowFilter.participations.created_ts"];
+          role?: parameters["rowFilter.participations.role"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.participations.id"];
+          room_id?: parameters["rowFilter.participations.room_id"];
+          user_id?: parameters["rowFilter.participations.user_id"];
+          created_ts?: parameters["rowFilter.participations.created_ts"];
+          role?: parameters["rowFilter.participations.role"];
+        };
+        body: {
+          /** participations */
+          participations?: definitions["participations"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/rooms": {
     get: {
       parameters: {
@@ -120,9 +219,68 @@ export interface paths {
       };
     };
   };
+  "/check_participation": {
+    get: {
+      parameters: {
+        query: {
+          user_id?: parameters["rowFilter.check_participation.user_id"];
+          role?: parameters["rowFilter.check_participation.role"];
+          slug?: parameters["rowFilter.check_participation.slug"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["check_participation"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+  };
 }
 
 export interface definitions {
+  participations: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `rooms.id`.<fk table='rooms' column='id'/>
+     */
+    room_id: string;
+    /** Format: uuid */
+    user_id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_ts?: string;
+    /** Format: text */
+    role: string;
+  };
   rooms: {
     /**
      * Format: uuid
@@ -147,10 +305,24 @@ export interface definitions {
     created_ts?: string;
     /** Format: timestamp with time zone */
     updated_ts?: string;
-    /** Format: timestamp with time zone */
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
     begin_ts?: string;
-    /** Format: timestamp with time zone */
+    /**
+     * Format: timestamp with time zone
+     * @default (now() + '02:00:00'::interval)
+     */
     end_ts?: string;
+  };
+  check_participation: {
+    /** Format: uuid */
+    user_id?: string;
+    /** Format: text */
+    role?: string;
+    /** Format: text */
+    slug?: string;
   };
 }
 
@@ -187,6 +359,18 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description participations */
+  "body.participations": definitions["participations"];
+  /** Format: uuid */
+  "rowFilter.participations.id": string;
+  /** Format: uuid */
+  "rowFilter.participations.room_id": string;
+  /** Format: uuid */
+  "rowFilter.participations.user_id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.participations.created_ts": string;
+  /** Format: text */
+  "rowFilter.participations.role": string;
   /** @description rooms */
   "body.rooms": definitions["rooms"];
   /** Format: uuid */
@@ -205,6 +389,14 @@ export interface parameters {
   "rowFilter.rooms.begin_ts": string;
   /** Format: timestamp with time zone */
   "rowFilter.rooms.end_ts": string;
+  /** @description check_participation */
+  "body.check_participation": definitions["check_participation"];
+  /** Format: uuid */
+  "rowFilter.check_participation.user_id": string;
+  /** Format: text */
+  "rowFilter.check_participation.role": string;
+  /** Format: text */
+  "rowFilter.check_participation.slug": string;
 }
 
 export interface operations {}

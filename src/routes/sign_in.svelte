@@ -11,9 +11,12 @@
 
 	async function signInWithTwitter() {
 		signingIn = true;
-		await supabase.auth.signIn({
-			provider: 'twitter',
-		});
+		await supabase.auth.signIn(
+			{
+				provider: 'twitter',
+			},
+			{ redirectTo: window.location.origin }
+		);
 	}
 
 	onMount(() => {
