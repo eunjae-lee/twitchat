@@ -22,7 +22,6 @@
 				messages = [...messages, payload.new];
 			})
 			.subscribe();
-		console.log('# subscription', subscription);
 	});
 
 	onDestroy(() => {
