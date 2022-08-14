@@ -22,6 +22,9 @@ export interface paths {
           created_ts?: parameters["rowFilter.participations.created_ts"];
           role?: parameters["rowFilter.participations.role"];
           status?: parameters["rowFilter.participations.status"];
+          picture?: parameters["rowFilter.participations.picture"];
+          user_name?: parameters["rowFilter.participations.user_name"];
+          full_name?: parameters["rowFilter.participations.full_name"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -78,6 +81,9 @@ export interface paths {
           created_ts?: parameters["rowFilter.participations.created_ts"];
           role?: parameters["rowFilter.participations.role"];
           status?: parameters["rowFilter.participations.status"];
+          picture?: parameters["rowFilter.participations.picture"];
+          user_name?: parameters["rowFilter.participations.user_name"];
+          full_name?: parameters["rowFilter.participations.full_name"];
         };
         header: {
           /** Preference */
@@ -98,6 +104,9 @@ export interface paths {
           created_ts?: parameters["rowFilter.participations.created_ts"];
           role?: parameters["rowFilter.participations.role"];
           status?: parameters["rowFilter.participations.status"];
+          picture?: parameters["rowFilter.participations.picture"];
+          user_name?: parameters["rowFilter.participations.user_name"];
+          full_name?: parameters["rowFilter.participations.full_name"];
         };
         body: {
           /** participations */
@@ -359,41 +368,6 @@ export interface paths {
       };
     };
   };
-  "/check_participation": {
-    get: {
-      parameters: {
-        query: {
-          user_id?: parameters["rowFilter.check_participation.user_id"];
-          role?: parameters["rowFilter.check_participation.role"];
-          slug?: parameters["rowFilter.check_participation.slug"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["check_participation"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-  };
   "/rpc/is_participating": {
     post: {
       parameters: {
@@ -468,6 +442,12 @@ export interface definitions {
      * @default granted
      */
     status: string;
+    /** Format: text */
+    picture?: string;
+    /** Format: text */
+    user_name?: string;
+    /** Format: text */
+    full_name?: string;
   };
   participations_with_slug: {
     /** Format: text */
@@ -551,14 +531,6 @@ export interface definitions {
      */
     end_ts?: string;
   };
-  check_participation: {
-    /** Format: uuid */
-    user_id?: string;
-    /** Format: text */
-    role?: string;
-    /** Format: text */
-    slug?: string;
-  };
 }
 
 export interface parameters {
@@ -608,6 +580,12 @@ export interface parameters {
   "rowFilter.participations.role": string;
   /** Format: text */
   "rowFilter.participations.status": string;
+  /** Format: text */
+  "rowFilter.participations.picture": string;
+  /** Format: text */
+  "rowFilter.participations.user_name": string;
+  /** Format: text */
+  "rowFilter.participations.full_name": string;
   /** @description participations_with_slug */
   "body.participations_with_slug": definitions["participations_with_slug"];
   /** Format: text */
@@ -648,14 +626,6 @@ export interface parameters {
   "rowFilter.rooms.begin_ts": string;
   /** Format: timestamp with time zone */
   "rowFilter.rooms.end_ts": string;
-  /** @description check_participation */
-  "body.check_participation": definitions["check_participation"];
-  /** Format: uuid */
-  "rowFilter.check_participation.user_id": string;
-  /** Format: text */
-  "rowFilter.check_participation.role": string;
-  /** Format: text */
-  "rowFilter.check_participation.slug": string;
 }
 
 export interface operations {}

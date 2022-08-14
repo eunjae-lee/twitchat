@@ -52,20 +52,35 @@ where
   (participations.role = 'admin' or participations.role = 'user')
   and participations.status = 'granted';
 
+
 -- TODO: protect `role`!
 alter table participations enable row level security;
 create policy "Can create own participations" on participations for insert with check (auth.uid() = user_id);
 create policy "Can view own participations." on participations for select using (true);
 create policy "Can update own participations." on participations for update using (auth.uid() = user_id);
 
-create function public.participate_as_admin()
+alter table participations add column user_name text;
+alter table participations add column full_name text;
+alter table participations add column picture text;
+
+create or replace function public.participate_as_admin()
 returns trigger as $$
+declare
+  user_name text;
+  full_name text;
+  picture text;
 begin
-  insert into public.participations (room_id, user_id, role)
-  values (new.id, auth.uid(), 'admin');
+  select raw_user_meta_data->>'preferred_username', raw_user_meta_data->>'full_name', raw_user_meta_data->>'picture'
+  into user_name, full_name, picture
+  from auth.users
+  where id = auth.uid();
+
+  insert into public.participations (room_id, user_id, role, user_name, full_name, picture)
+  values (new.id, auth.uid(), 'admin', user_name, full_name, picture);
   return new;
 end;
 $$ language plpgsql security definer;
+
 create trigger on_room_created2
   after insert on public.rooms
   for each row execute procedure public.participate_as_admin();
@@ -75,13 +90,21 @@ create or replace function participate_room(param_slug text)
 returns void as $$
   declare
     room_id uuid;
+    user_name text;
+    full_name text;
+    picture text;
   begin
     select id
     into room_id
     from rooms where rooms.slug = param_slug;
 
-    insert into participations (room_id, user_id, role)
-    values (room_id, auth.uid(), 'user');
+    select raw_user_meta_data->>'preferred_username', raw_user_meta_data->>'full_name', raw_user_meta_data->>'picture'
+    into user_name, full_name, picture
+    from auth.users
+    where id = auth.uid();
+
+    insert into participations (room_id, user_id, role, user_name, full_name, picture)
+    values (room_id, auth.uid(), 'user', user_name, full_name, picture);
   end;
 $$ language plpgsql;
 
@@ -102,3 +125,4 @@ create policy "Can create own messages." on messages for insert with check (
 create policy "Can view any messages in participating rooms." on messages for select using (
   is_participating(room_id)
 );
+

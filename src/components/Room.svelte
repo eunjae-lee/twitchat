@@ -1,33 +1,64 @@
 <script lang="ts">
-	import { getPreviousMessages, getRoom, sendTextMessage, supabase } from '$lib/db';
-	import type { Message, Room } from '$lib/types';
-
+	import {
+		getParticipations,
+		getPreviousMessages,
+		getRoom,
+		sendTextMessage,
+		supabase,
+	} from '$lib/db';
+	import type { Message, Participation, Room } from '$lib/types';
+	import { getter, room as roomTexts } from '$lib/text';
 	import { onDestroy, onMount } from 'svelte';
+	import MessageComp from './Message.svelte';
 
 	export let slug: string;
 	let room: Room;
 	let message: string;
-	let subscription: any;
+	let messageSubscription: any;
 	let messages: Message[] = [];
+	let participationMap: Record<string, Participation> = {};
+	let participationSubscription: any;
+	const t = getter(roomTexts);
 
 	onMount(async () => {
 		room = (await getRoom({ slug }))!;
+
+		getParticipations({ roomId: room.id }).then((result) => {
+			result.forEach((participation) => {
+				participationMap[participation.user_id] = participation;
+			});
+			participationMap = participationMap;
+		});
+
 		getPreviousMessages({ room_id: room.id }).then((result) => {
 			messages = result;
 		});
 
-		subscription = supabase
+		messageSubscription = supabase
 			.from<Message>(`messages:room_id=eq.${room.id}`)
 			.on('INSERT', (payload) => {
-				messages = [...messages, payload.new];
+				messages.push(payload.new);
+				messages = messages;
+			})
+			.subscribe();
+
+		participationSubscription = supabase
+			.from<Participation>(`participations:room_id.eq.${room.id}`)
+			.on('INSERT', (payload) => {
+				participationMap[payload.new.user_id] = payload.new;
+				participationMap = participationMap;
 			})
 			.subscribe();
 	});
 
 	onDestroy(() => {
-		if (subscription) {
-			supabase.removeSubscription(subscription);
-			subscription = undefined;
+		if (messageSubscription) {
+			supabase.removeSubscription(messageSubscription);
+			messageSubscription = undefined;
+		}
+		if (participationSubscription) {
+			supabase.removeSubscription(participationSubscription);
+			participationSubscription = undefined;
 		}
 	});
 
@@ -40,9 +71,9 @@
 <p>{room && room.title}</p>
 
 {#each messages as message (message.id)}
-	<div>{message.content}</div>
+	<MessageComp {message} participation={participationMap[message.user_id]} />
 {/each}
 
 <form on:submit|preventDefault={onSubmit}>
-	<input bind:value={message} />
+	<input bind:value={message} placeholder={t('placeholder')} />
 </form>
