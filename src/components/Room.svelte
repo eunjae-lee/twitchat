@@ -71,7 +71,9 @@
 <p>{room && room.title}</p>
 
 {#each messages as message (message.id)}
-	<MessageComp {message} participation={participationMap[message.user_id]} />
+	{#if participationMap[message.user_id]}
+		<MessageComp {message} participation={participationMap[message.user_id]} />
+	{/if}
 {/each}
 
 <form on:submit|preventDefault={onSubmit}>
