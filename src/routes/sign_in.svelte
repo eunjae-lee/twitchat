@@ -15,7 +15,7 @@
 			{
 				provider: 'twitter',
 			},
-			{ redirectTo: window.location.origin }
+			{ redirectTo: window.location.origin + '/authenticated' }
 		);
 	}
 
