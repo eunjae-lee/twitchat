@@ -65,18 +65,9 @@ alter table participations add column picture text;
 
 create or replace function public.participate_as_admin()
 returns trigger as $$
-declare
-  user_name text;
-  full_name text;
-  picture text;
 begin
-  select raw_user_meta_data->>'preferred_username', raw_user_meta_data->>'full_name', raw_user_meta_data->>'picture'
-  into user_name, full_name, picture
-  from auth.users
-  where id = auth.uid();
-
-  insert into public.participations (room_id, user_id, role, user_name, full_name, picture)
-  values (new.id, auth.uid(), 'admin', user_name, full_name, picture);
+  insert into public.participations (room_id, user_id, role)
+  values (new.id, auth.uid(), 'admin');
   return new;
 end;
 $$ language plpgsql security definer;
@@ -90,23 +81,44 @@ create or replace function participate_room(param_slug text)
 returns void as $$
   declare
     room_id uuid;
-    user_name text;
-    full_name text;
-    picture text;
   begin
     select id
     into room_id
     from rooms where rooms.slug = param_slug;
 
-    select raw_user_meta_data->>'preferred_username', raw_user_meta_data->>'full_name', raw_user_meta_data->>'picture'
-    into user_name, full_name, picture
-    from auth.users
-    where id = auth.uid();
-
-    insert into participations (room_id, user_id, role, user_name, full_name, picture)
-    values (room_id, auth.uid(), 'user', user_name, full_name, picture);
+    insert into participations (room_id, user_id, role)
+    values (room_id, auth.uid(), 'user');
   end;
 $$ language plpgsql;
+
+
+create or replace function public.update_user_info_to_participation()
+returns trigger as $$
+declare
+  new_user_name text;
+  new_full_name text;
+  new_picture text;
+begin
+  select raw_user_meta_data->>'preferred_username', raw_user_meta_data->>'full_name', raw_user_meta_data->>'picture'
+  into new_user_name, new_full_name, new_picture
+  from auth.users
+  where id = new.user_id;
+
+  update participations
+  set
+    user_name = new_user_name,
+    full_name = new_full_name,
+    picture = new_picture
+  where
+    id = new.id;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_participation_inserted
+  after insert on public.participations
+  for each row execute procedure public.update_user_info_to_participation();
 
 
 create table messages (
