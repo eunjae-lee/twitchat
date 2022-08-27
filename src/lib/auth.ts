@@ -30,6 +30,11 @@ export function setRedirectionAfterSignIn(path: string) {
 	sessionStorage.setItem(KEY_REDIRECT_TO, path);
 }
 
+export function peekRedirectionAfterSignIn() {
+	const value = sessionStorage.getItem(KEY_REDIRECT_TO);
+	return value;
+}
+
 export function popRedirectionAfterSignIn() {
 	const value = sessionStorage.getItem(KEY_REDIRECT_TO);
 	sessionStorage.removeItem(KEY_REDIRECT_TO);

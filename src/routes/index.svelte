@@ -1,14 +1,24 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { session } from '$app/stores';
-	import { popRedirectionAfterSignIn } from '$lib/auth';
+	import { peekRedirectionAfterSignIn, popRedirectionAfterSignIn } from '$lib/auth';
 	import { getter, landing, getSiteTitle } from '$lib/text';
 	const t = getter(landing);
 
 	const beingRedirectedFromTwitter =
 		typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=');
 
+	let logs: string[] = [];
+	logs.push(`beingRedirectedFromTwitter: ${beingRedirectedFromTwitter}`);
+	logs.push(`window.location.hash: ${typeof window !== 'undefined' && window.location.hash}`);
+
 	$: {
+		logs.push(`inside $ -> $session.user.id: ${$session.user && $session.user.id}`);
+		logs.push(
+			`inside $ -> redirectionAfterSignIn: ${
+				typeof window !== 'undefined' && peekRedirectionAfterSignIn()
+			}`
+		);
 		const sessionExists = $session.user && $session.user.id;
 
 		if (sessionExists && beingRedirectedFromTwitter) {
@@ -44,5 +54,10 @@
 				<a sveltekit:prefetch href="/new" class="btn btn-primary">{t('newChat')}</a>
 			</div>
 		</div>
+	</div>
+
+	<div>
+		<h2>debug</h2>
+		<pre>{logs.join('\n')}</pre>
 	</div>
 </div>
