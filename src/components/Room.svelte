@@ -23,16 +23,13 @@
 	onMount(async () => {
 		room = (await getRoom({ slug }))!;
 
-		getParticipations({ roomId: room.id }).then((result) => {
-			result.forEach((participation) => {
-				participationMap[participation.user_id] = participation;
-			});
-			participationMap = participationMap;
+		const participations = await getParticipations({ roomId: room.id });
+		participations.forEach((participation) => {
+			participationMap[participation.user_id] = participation;
 		});
+		participationMap = participationMap;
 
-		getPreviousMessages({ room_id: room.id }).then((result) => {
-			messages = result;
-		});
+		messages = await getPreviousMessages({ room_id: room.id });
 
 		messageSubscription = supabase
 			.from<Message>(`messages:room_id=eq.${room.id}`)
@@ -43,7 +40,7 @@
 			.subscribe();
 
 		participationSubscription = supabase
-			.from<Participation>(`participations:room_id.eq.${room.id}`)
+			.from<Participation>(`participations:room_id=eq.${room.id}`)
 			.on('INSERT', (payload) => {
 				participationMap[payload.new.user_id] = payload.new;
 				participationMap = participationMap;
@@ -68,7 +65,9 @@
 	}
 </script>
 
-<p>{room && room.title}</p>
+{#if room}
+	<p>{room.title}</p>
+{/if}
 
 {#each messages as message (message.id)}
 	{#if participationMap[message.user_id]}

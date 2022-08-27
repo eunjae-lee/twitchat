@@ -99,25 +99,24 @@ declare
   new_full_name text;
   new_picture text;
 begin
-  select raw_user_meta_data->>'preferred_username', raw_user_meta_data->>'full_name', raw_user_meta_data->>'picture'
+  select
+    (raw_user_meta_data->>'preferred_username') as c1,
+    (raw_user_meta_data->>'full_name') as c2,
+    (raw_user_meta_data->>'picture') as c3
   into new_user_name, new_full_name, new_picture
   from auth.users
   where id = new.user_id;
 
-  update participations
-  set
-    user_name = new_user_name,
-    full_name = new_full_name,
-    picture = new_picture
-  where
-    id = new.id;
+  new.user_name := new_user_name;
+  new.full_name := new_full_name;
+  new.picture := new_picture;
 
   return new;
 end;
 $$ language plpgsql security definer;
 
 create trigger on_participation_inserted
-  after insert on public.participations
+  before insert on public.participations
   for each row execute procedure public.update_user_info_to_participation();
 
 
