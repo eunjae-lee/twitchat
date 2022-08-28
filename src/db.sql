@@ -70,7 +70,7 @@ begin
   new.created_ts := old.created_ts;
   new.role := old.role;
 
-  if new.user_id = auth.uid() AND old.status = 'banned' THEN
+  if auth.uid() != null AND old.status = 'banned' THEN
     -- user cannot get out of the banned status on their own
     new.status = 'banned';
   end if;
