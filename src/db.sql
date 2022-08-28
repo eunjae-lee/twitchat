@@ -77,7 +77,7 @@ create trigger on_room_created2
   for each row execute procedure public.participate_as_admin();
 
 
-create or replace function participate_room(param_slug text)
+create or replace function participate_as_user(param_slug text)
 returns void as $$
   declare
     room_id uuid;

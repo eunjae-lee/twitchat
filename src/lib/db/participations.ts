@@ -17,7 +17,7 @@ export async function isParticipating({
 }
 
 export async function participate({ slug }: { slug: string }): Promise<void> {
-	await supabase.rpc('participate_room', { param_slug: slug });
+	await supabase.rpc('participate_as_user', { param_slug: slug });
 }
 
 export async function getParticipations({ roomId }: { roomId: string }): Promise<Participation[]> {
