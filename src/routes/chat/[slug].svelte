@@ -11,7 +11,8 @@
 </script>
 
 <script lang="ts">
-	import { isParticipating, participate } from '$lib/db';
+	import { getRoom, isParticipating, participate } from '$lib/db';
+	import type { Room as RoomType } from '$lib/types';
 	import { session } from '$app/stores';
 	import Room from '../../components/Room.svelte';
 
@@ -21,8 +22,10 @@
 	const LOADING = 'loading';
 
 	let status: 'need_to_join' | 'joined' | 'loading' = LOADING;
+	let room: RoomType | undefined;
 
 	async function checkParticipation() {
+		room = (await getRoom({ slug }))!;
 		status = (await isParticipating({ slug, user_id: $session.user.id })) ? JOINED : NEED_TO_JOIN;
 	}
 
@@ -41,8 +44,8 @@
 {#if status === NEED_TO_JOIN}
 	Do you want to join this room?
 	<button type="button" on:click={join}>Join</button>
-{:else if status === JOINED}
-	<Room {slug} />
+{:else if status === JOINED && room}
+	<Room {room} />
 {:else if status === LOADING}
 	<svg
 		class="animate-spin h-8 w-8"

@@ -368,6 +368,26 @@ export interface paths {
       };
     };
   };
+  "/rpc/participate_room_test": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: text */
+            param_slug: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
   "/rpc/is_participating": {
     post: {
       parameters: {
@@ -484,7 +504,7 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    created_ts?: string;
+    created_ts: string;
     /** Format: text */
     content?: string;
     /**
