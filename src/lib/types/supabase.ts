@@ -368,7 +368,7 @@ export interface paths {
       };
     };
   };
-  "/rpc/participate_room_test": {
+  "/rpc/participate_as_user": {
     post: {
       parameters: {
         body: {
@@ -395,26 +395,6 @@ export interface paths {
           args: {
             /** Format: uuid */
             param_room_id: string;
-          };
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferParams"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: unknown;
-      };
-    };
-  };
-  "/rpc/participate_room": {
-    post: {
-      parameters: {
-        body: {
-          args: {
-            /** Format: text */
-            param_slug: string;
           };
         };
         header: {
