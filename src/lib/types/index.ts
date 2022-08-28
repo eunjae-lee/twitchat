@@ -8,3 +8,4 @@ export type Participation = definitions['participations'];
 export type ParticipationWithSlug = definitions['participations_with_slug'];
 
 export type ParticipationRole = 'admin' | 'user';
+export type ParticipationType = 'granted' | 'banned';
