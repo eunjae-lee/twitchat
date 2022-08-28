@@ -8,11 +8,46 @@ create table rooms (
   begin_ts TIMESTAMP WITH TIME ZONE default now(),
   end_ts TIMESTAMP WITH TIME ZONE default now() + interval '2 hours'
 );
--- TODO: protect `begin_ts` and `end_ts`!
 alter table rooms enable row level security;
 create policy "Can create own rooms." on rooms for insert with check (auth.uid() = user_id);
 create policy "Can update own rooms." on rooms for update using (auth.uid() = user_id);
 create policy "Can view any rooms." on rooms for select using (true);
+
+create or replace function public.tidy_room_before_insert()
+returns trigger as $$
+begin
+  -- provide default values for begin_ts and end_ts
+  new.begin_ts := now();
+  new.end_ts := now() + interval '2 hours';
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_room_before_insert
+  before insert on public.rooms
+  for each row execute procedure public.tidy_room_before_insert();
+
+
+create or replace function public.tidy_room_before_update()
+returns trigger as $$
+begin
+  -- keep previous values as-is
+  new.user_id := old.user_id;
+  new.slug := old.slug;
+  new.created_ts := old.created_ts;
+  new.updated_ts := old.updated_ts;
+  new.begin_ts := old.begin_ts;
+  new.end_ts := old.end_ts;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_room_before_update
+  before update on public.rooms
+  for each row execute procedure public.tidy_room_before_update();
+
 
 create table participations (
   id uuid not null primary key default uuid_generate_v4(),
@@ -24,7 +59,30 @@ create table participations (
   UNIQUE(room_id, user_id)
 );
 alter table participations add column status text not null default 'granted';
--- TODO: protect `status`!
+
+create or replace function public.tidy_participation_before_update()
+returns trigger as $$
+begin
+  -- keep previous values as-is
+  new.id := old.id;
+  new.room_id := old.room_id;
+  new.user_id := old.user_id;
+  new.created_ts := old.created_ts;
+  new.role := old.role;
+
+  if auth.uid() != null AND old.status = 'banned' THEN
+    -- user cannot get out of the banned status on their own
+    new.status = 'banned';
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_participation_before_update
+  before update on public.participations
+  for each row execute procedure public.tidy_participation_before_update();
+
 
 create or replace function is_participating(param_room_id uuid)
 returns boolean as $$
@@ -53,7 +111,6 @@ where
   and participations.status = 'granted';
 
 
--- TODO: protect `role`!
 alter table participations enable row level security;
 create policy "Can create own participations" on participations for insert with check (auth.uid() = user_id);
 create policy "Can view own participations." on participations for select using (true);
