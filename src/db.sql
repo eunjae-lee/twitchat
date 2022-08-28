@@ -129,7 +129,8 @@ create table messages (
   content text,
   type text default 'text' -- 'text' | 'emoji' | ...
 );
-alter table rooms enable row level security;
+alter table messages enable row level security;
+ALTER TABLE messages ALTER COLUMN created_ts SET NOT NULL;
 create policy "Can create own messages." on messages for insert with check (
   auth.uid() = user_id and is_participating(room_id)
 );

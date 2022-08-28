@@ -1,80 +1,56 @@
 <script lang="ts">
-	import {
-		getParticipations,
-		getPreviousMessages,
-		getRoom,
-		sendTextMessage,
-		supabase,
-	} from '$lib/db';
-	import type { Message, Participation, Room } from '$lib/types';
+	import { sendTextMessage } from '$lib/db';
+	import type { Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
-	import { onDestroy, onMount } from 'svelte';
+	import { subscribeToMessages, subscribeToParticipations } from '$lib/room';
+	import { onDestroy } from 'svelte';
 	import MessageComp from './Message.svelte';
 
-	export let slug: string;
-	let room: Room;
+	export let room: Room;
+
 	let message: string;
-	let messageSubscription: any;
-	let messages: Message[] = [];
-	let participationMap: Record<string, Participation> = {};
-	let participationSubscription: any;
+	let ready: boolean = false;
+	let submitting: boolean = false;
 	const t = getter(roomTexts);
 
-	onMount(async () => {
-		room = (await getRoom({ slug }))!;
+	const {
+		state: roomState,
+		messages,
+		unsubscribe: unsubscribeMessages,
+	} = subscribeToMessages(room.id);
 
-		const participations = await getParticipations({ roomId: room.id });
-		participations.forEach((participation) => {
-			participationMap[participation.user_id] = participation;
-		});
-		participationMap = participationMap;
-
-		messages = await getPreviousMessages({ room_id: room.id });
-
-		messageSubscription = supabase
-			.from<Message>(`messages:room_id=eq.${room.id}`)
-			.on('INSERT', (payload) => {
-				messages.push(payload.new);
-				messages = messages;
-			})
-			.subscribe();
-
-		participationSubscription = supabase
-			.from<Participation>(`participations:room_id=eq.${room.id}`)
-			.on('INSERT', (payload) => {
-				participationMap[payload.new.user_id] = payload.new;
-				participationMap = participationMap;
-			})
-			.subscribe();
-	});
+	const {
+		state: participationsState,
+		participationMap,
+		unsubscribe: unsubscribeParticipations,
+	} = subscribeToParticipations(room.id);
 
 	onDestroy(() => {
-		if (messageSubscription) {
-			supabase.removeSubscription(messageSubscription);
-			messageSubscription = undefined;
-		}
-		if (participationSubscription) {
-			supabase.removeSubscription(participationSubscription);
-			participationSubscription = undefined;
-		}
+		unsubscribeMessages();
+		unsubscribeParticipations();
 	});
 
 	async function onSubmit() {
+		if (!ready || submitting) {
+			return;
+		}
+		submitting = true;
 		await sendTextMessage({ room_id: room.id, message });
 		message = '';
+		submitting = false;
 	}
+
+	$: ready = $roomState === 'subscribed' && $participationsState === 'subscribed';
 </script>
 
-{#if room}
-	<p>{room.title}</p>
-{/if}
+<p>{room.title}</p>
 
-{#each messages as message (message.id)}
-	{#if participationMap[message.user_id]}
-		<MessageComp {message} participation={participationMap[message.user_id]} />
+{#each $messages as message (message.id)}
+	{#if $participationMap[message.user_id]}
+		<MessageComp {message} participation={$participationMap[message.user_id]} />
 	{/if}
 {/each}
 
 <form on:submit|preventDefault={onSubmit}>
-	<input bind:value={message} placeholder={t('placeholder')} />
+	<input bind:value={message} placeholder={t('placeholder')} disabled={!ready} />
 </form>

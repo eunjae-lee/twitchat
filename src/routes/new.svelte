@@ -71,6 +71,7 @@
 						type="text"
 						class="input input-bordered w-full max-w-xs"
 						bind:value={title}
+						autofocus
 						required
 					/>
 					<label class="label" for="title">
