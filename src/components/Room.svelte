@@ -48,7 +48,7 @@
 
 <div class="navbar bg-base-100">
 	<div class="flex-none">
-		<img src="/logo.png" alt="TwitChat logo" class="w-8" />
+		<img src="/logo.png" alt="TwitChat logo" class="ml-2 w-8" />
 	</div>
 	<div class="flex-1">
 		<p class="ml-2 text-xl">{room.title}</p>
