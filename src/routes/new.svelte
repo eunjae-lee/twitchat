@@ -47,46 +47,37 @@
 	}
 </script>
 
-<div class="container mx-auto flex flex-col">
-	<div class="navbar">
-		<div class="navbar-start">
-			<a href="/" class="btn btn-ghost normal-case text-xl">
-				<img src="/logo.png" alt="TwitChat logo" class="w-8" />
-				<span class="ml-2">{getSiteTitle()}</span>
-			</a>
-		</div>
+<div class="container narrow-container mx-auto flex flex-col items-center">
+	<div class="mt-16 w-full">
+		<a href="/" class="-ml-4 btn btn-ghost normal-case text-xl">
+			<img src="/logo.png" alt="TwitChat logo" class="w-8" />
+			<span class="ml-2">{getSiteTitle()}</span>
+		</a>
 	</div>
-	<div class="self-center mt-16 card w-96 bg-base-100 shadow-xl">
-		<div class="card-body gap-8">
-			<h2 class="card-title text-2xl justify-center">
-				<span>{t('h1')}</span>
-			</h2>
-			<form on:submit|preventDefault={onSubmit}>
-				<div class="form-control w-full max-w-xs">
-					<label class="label" for="title">
-						<span class="label-text">{t('titleLabel')}</span>
-					</label>
-					<input
-						name="title"
-						type="text"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={title}
-						autofocus
-						required
-					/>
-					<label class="label" for="title">
-						<span class="label-text-alt">{t('titlePlaceholder')}</span>
-					</label>
-				</div>
-				<div class="mt-8 card-actions">
-					<button
-						type="submit"
-						class="btn btn-primary grow"
-						class:loading={submitting}
-						disabled={submitting}><span class="ml-2">{t('startNow')}</span></button
-					>
-				</div>
-			</form>
+	<form class="mt-12 w-full" on:submit|preventDefault={onSubmit}>
+		<div class="form-control w-full max-w-xs">
+			<label class="label" for="title">
+				<span class="label-text">{t('titleLabel')}</span>
+			</label>
+			<input
+				name="title"
+				type="text"
+				class="input input-bordered w-full max-w-xs"
+				bind:value={title}
+				autofocus
+				required
+			/>
+			<label class="label" for="title">
+				<span class="label-text-alt">{t('titlePlaceholder')}</span>
+			</label>
 		</div>
-	</div>
+		<div class="mt-8 card-actions">
+			<button
+				type="submit"
+				class="btn btn-primary grow"
+				class:loading={submitting}
+				disabled={submitting}><span class="ml-2">{t('startNow')}</span></button
+			>
+		</div>
+	</form>
 </div>

@@ -36,53 +36,24 @@
 			</p>
 		{/if}
 	</div>
-	<div class="mt-12 w-full px-4 flex flex-col items-center">
-		<a sveltekit:prefetch href="/new" class="w-full sm:w-64 btn btn-primary text-lg"
+	<div class="mt-28 flex flex-col items-center">
+		<a sveltekit:prefetch href="/new" class="narrow-container btn btn-primary text-lg"
 			>{t('newChat')}</a
 		>
-		<p class="mt-1 opacity-75 text-sm">{t('subMessage')}</p>
+		<p class="mt-2 opacity-75 text-sm">{t('subMessage')}</p>
 	</div>
 
-	<div class="mt-32 fixed bottom-0 py-8">
+	<div class="fixed bottom-0 py-8">
 		<a
-			class="text-xs opacity-10 hover:opacity-50"
 			href="https://twitter.com/twitchat_app"
 			target="_blank"
+			class="text-gray-400 hover:text-gray-500"
 		>
-			<svg
-				class="w-8"
-				version="1.1"
-				id="Layer_1"
-				xmlns="http://www.w3.org/2000/svg"
-				xmlns:xlink="http://www.w3.org/1999/xlink"
-				x="0px"
-				y="0px"
-				viewBox="0 0 400 400"
-				style="enable-background:new 0 0 400 400;"
-				xml:space="preserve"
-			>
-				<style type="text/css">
-					.st0 {
-						fill: #1b9df0;
-					}
-					.st1 {
-						fill: #ffffff;
-					}
-				</style>
-				<g id="Dark_Blue">
-					<circle class="st0" cx="200" cy="200" r="200" />
-				</g>
-				<g id="Logo__x2014__FIXED">
-					<path
-						class="st1"
-						d="M163.4,305.5c88.7,0,137.2-73.5,137.2-137.2c0-2.1,0-4.2-0.1-6.2c9.4-6.8,17.6-15.3,24.1-25
-					c-8.6,3.8-17.9,6.4-27.7,7.6c10-6,17.6-15.4,21.2-26.7c-9.3,5.5-19.6,9.5-30.6,11.7c-8.8-9.4-21.3-15.2-35.2-15.2
-					c-26.6,0-48.2,21.6-48.2,48.2c0,3.8,0.4,7.5,1.3,11c-40.1-2-75.6-21.2-99.4-50.4c-4.1,7.1-6.5,15.4-6.5,24.2
-					c0,16.7,8.5,31.5,21.5,40.1c-7.9-0.2-15.3-2.4-21.8-6c0,0.2,0,0.4,0,0.6c0,23.4,16.6,42.8,38.7,47.3c-4,1.1-8.3,1.7-12.7,1.7
-					c-3.1,0-6.1-0.3-9.1-0.9c6.1,19.2,23.9,33.1,45,33.5c-16.5,12.9-37.3,20.6-59.9,20.6c-3.9,0-7.7-0.2-11.5-0.7
-					C110.8,297.5,136.2,305.5,163.4,305.5"
-					/>
-				</g>
+			<span class="sr-only">Twitter</span>
+			<svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+				<path
+					d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"
+				/>
 			</svg>
 		</a>
 	</div>

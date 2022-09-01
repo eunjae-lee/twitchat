@@ -45,7 +45,7 @@
 </SupaAuthHelper>
 
 <style>
-	:global(:root) {
-		@apply bg-[#f9fafb] dark:bg-[#292929];
+	:global(.narrow-container) {
+		@apply w-[18rem];
 	}
 </style>
