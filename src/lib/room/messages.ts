@@ -3,7 +3,15 @@ import type { Message } from '$lib/types';
 import type { RealtimeSubscription } from '@supabase/realtime-js';
 import { writable } from 'svelte/store';
 
-export function subscribeToMessages(roomId: string) {
+export function subscribeToMessages({
+	roomId,
+	onMessagesLoadedInitially,
+	onNewMessage,
+}: {
+	roomId: string;
+	onMessagesLoadedInitially: () => void;
+	onNewMessage: () => void;
+}) {
 	const messages = writable<Message[]>([]);
 	const state = writable<'init' | 'subscribed'>('init');
 
@@ -14,6 +22,7 @@ export function subscribeToMessages(roomId: string) {
 				array.push(payload.new);
 				return array;
 			});
+			onNewMessage();
 		})
 		.subscribe((event: string) => {
 			if (event === 'SUBSCRIBED') {
@@ -40,6 +49,7 @@ export function subscribeToMessages(roomId: string) {
 					.sort((a, b) => new Date(a.created_ts).getTime() - new Date(b.created_ts).getTime())
 			);
 		});
+		onMessagesLoadedInitially();
 	});
 
 	function unsubscribe() {
