@@ -79,7 +79,7 @@
 	{#each $messages as message (message.id)}
 		{#if $participationMap[message.user_id]}
 			<MessageViewer
-				isMine={false && $session.user.id === message.user_id}
+				isMine={$session.user.id === message.user_id}
 				{message}
 				participation={$participationMap[message.user_id]}
 			/>
