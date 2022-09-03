@@ -1,18 +1,12 @@
 <script lang="ts">
+	import { makeItTwo } from '$lib/number';
+
 	import type { Message, Participation } from '$lib/types';
 	import Bubble from './Bubble.svelte';
 
 	export let message: Message;
 	export let participation: Participation;
 	export let isMine: boolean;
-
-	function makeItTwo(number: Number) {
-		if (number < 10) {
-			return `0${number}`;
-		} else {
-			return String(number);
-		}
-	}
 
 	function formatTime(date: Date) {
 		return `${makeItTwo(date.getHours())}:${makeItTwo(date.getMinutes())}`;

@@ -13,6 +13,9 @@ create policy "Can create own rooms." on rooms for insert with check (auth.uid()
 create policy "Can update own rooms." on rooms for update using (auth.uid() = user_id);
 create policy "Can view any rooms." on rooms for select using (true);
 
+alter table rooms alter column begin_ts set not null;
+alter table rooms alter column end_ts set not null;
+
 create or replace function public.tidy_room_before_insert()
 returns trigger as $$
 begin
@@ -32,13 +35,15 @@ create trigger on_room_before_insert
 create or replace function public.tidy_room_before_update()
 returns trigger as $$
 begin
-  -- keep previous values as-is
-  new.user_id := old.user_id;
-  new.slug := old.slug;
-  new.created_ts := old.created_ts;
-  new.updated_ts := old.updated_ts;
-  new.begin_ts := old.begin_ts;
-  new.end_ts := old.end_ts;
+  if auth.uid() != null then
+    -- keep previous values as-is if it's not admin
+    new.user_id := old.user_id;
+    new.slug := old.slug;
+    new.created_ts := old.created_ts;
+    new.updated_ts := old.updated_ts;
+    new.begin_ts := old.begin_ts;
+    new.end_ts := old.end_ts;
+  end if;
 
   return new;
 end;
@@ -64,12 +69,14 @@ alter table participations alter column created_ts set not null;
 create or replace function public.tidy_participation_before_update()
 returns trigger as $$
 begin
-  -- keep previous values as-is
-  new.id := old.id;
-  new.room_id := old.room_id;
-  new.user_id := old.user_id;
-  new.created_ts := old.created_ts;
-  new.role := old.role;
+  if auth.uid() != null then
+    -- keep previous values as-is if it's not admin
+    new.id := old.id;
+    new.room_id := old.room_id;
+    new.user_id := old.user_id;
+    new.created_ts := old.created_ts;
+    new.role := old.role;
+  end if;
 
   if auth.uid() != null AND old.status = 'banned' THEN
     -- user cannot get out of the banned status on their own
@@ -196,3 +203,25 @@ create policy "Can view any messages in participating rooms." on messages for se
   is_participating(room_id)
 );
 
+create or replace function public.check_before_inserting_message()
+returns trigger as $$
+declare
+  room_end_ts TIMESTAMP WITH TIME ZONE;
+begin
+  select
+    end_ts
+  into room_end_ts
+  from rooms
+  where id = new.room_id;
+
+  if room_end_ts < now() then
+    raise 'room is closed';
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_message_inserted
+  before insert on public.messages
+  for each row execute procedure public.check_before_inserting_message();

@@ -524,12 +524,12 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    begin_ts?: string;
+    begin_ts: string;
     /**
      * Format: timestamp with time zone
      * @default (now() + '02:00:00'::interval)
      */
-    end_ts?: string;
+    end_ts: string;
   };
 }
 
