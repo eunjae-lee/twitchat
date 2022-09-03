@@ -3,7 +3,7 @@
 	import type { Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
 
-	export let ready: boolean;
+	export let active: boolean;
 	export let room: Room;
 
 	const t = getter(roomTexts);
@@ -13,8 +13,7 @@
 	let messageInputFocused: boolean = false;
 
 	async function onSubmit() {
-		event.preventDefault();
-		if (!ready || submitting || !message) {
+		if (!active || submitting || !message) {
 			return;
 		}
 		submitting = true;
@@ -46,7 +45,7 @@
 		bind:value={message}
 		style:height="{inputHeight}rem"
 		placeholder={t('placeholder')}
-		disabled={!ready}
+		disabled={!active}
 		on:focus={onFocus}
 		on:blur={onBlur}
 		on:keydown={onKeyDown}
