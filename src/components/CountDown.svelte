@@ -15,7 +15,14 @@
 	const WARNING_TIME = 60 * 3;
 	const ERROR_TIME = 60;
 
+	let Confetti: any;
+
 	onMount(() => {
+		// load js-confetti asynchronously because we don't need it immediately
+		import('js-confetti').then((module) => {
+			Confetti = module.default;
+		});
+
 		intervalId = setInterval(() => {
 			secondsLeft -= 1;
 			if (secondsLeft < 0) {
@@ -23,6 +30,11 @@
 				clearInterval(intervalId);
 				intervalId = undefined;
 				onClosed();
+				if (Confetti) {
+					new Confetti().addConfetti({
+						emojis: ['🌈', '⚡️', '💥', '✨', '💫', '🌸'],
+					});
+				}
 				return;
 			}
 

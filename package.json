@@ -47,6 +47,7 @@
 		"@sentry/node": "^7.7.0",
 		"@sentry/tracing": "^7.7.0",
 		"@supabase/auth-helpers-svelte": "^0.4.5",
-		"@supabase/auth-helpers-sveltekit": "^0.6.8"
+		"@supabase/auth-helpers-sveltekit": "^0.6.8",
+		"js-confetti": "^0.10.2"
 	}
 }
