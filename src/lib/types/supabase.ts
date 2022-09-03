@@ -434,7 +434,7 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    created_ts?: string;
+    created_ts: string;
     /** Format: text */
     role: string;
     /**

@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { Room } from '$lib/types';
+	import type { ChatItem, Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
 	import { subscribeToMessages, subscribeToParticipations } from '$lib/room';
 	import { onDestroy } from 'svelte';
 	import { session } from '$app/stores';
-	import MessageViewer from './message/Viewer.svelte';
+	import MessageView from './message/View.svelte';
 	import MessageComposer from './message/Composer.svelte';
+	import ParticipationView from './ParticipationView.svelte';
 
 	export let room: Room;
 
@@ -13,6 +14,7 @@
 
 	let ready: boolean = false;
 	let messageContainer: HTMLDivElement;
+	let chatItems: ChatItem[] = [];
 
 	const {
 		state: roomState,
@@ -44,6 +46,22 @@
 	});
 
 	$: ready = $roomState === 'subscribed' && $participationsState === 'subscribed';
+
+	// merge messages and participations
+	$: chatItems = [
+		...$messages.map((message) => ({
+			id: message.id,
+			type: 'm',
+			created_ts: message.created_ts,
+			message,
+		})),
+		...Object.values($participationMap).map((participation) => ({
+			id: participation.id,
+			type: 'p',
+			created_ts: participation.created_ts,
+			participation,
+		})),
+	].sort((a, b) => new Date(a.created_ts).getTime() - new Date(b.created_ts).getTime());
 </script>
 
 <div class="navbar bg-base-100">
@@ -76,13 +94,16 @@
 	class="overflow-y-auto flex flex-col gap-4 px-4"
 	style:height="calc(100vh - 9rem)"
 >
-	{#each $messages as message (message.id)}
-		{#if $participationMap[message.user_id]}
-			<MessageViewer
-				isMine={$session.user.id === message.user_id}
-				{message}
-				participation={$participationMap[message.user_id]}
+	{#each chatItems as chatItem (`${chatItem.type}-${chatItem.id}`)}
+		{#if chatItem.type === 'm' && $participationMap[chatItem.message.user_id]}
+			<MessageView
+				isMine={$session.user.id === chatItem.message.user_id}
+				message={chatItem.message}
+				participation={$participationMap[chatItem.message.user_id]}
 			/>
+		{/if}
+		{#if chatItem.type === 'p'}
+			<ParticipationView participation={chatItem.participation} />
 		{/if}
 	{/each}
 </div>
