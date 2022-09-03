@@ -59,6 +59,7 @@ create table participations (
   UNIQUE(room_id, user_id)
 );
 alter table participations add column status text not null default 'granted';
+alter table participations alter column created_ts set not null;
 
 create or replace function public.tidy_participation_before_update()
 returns trigger as $$
