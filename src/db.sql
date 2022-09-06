@@ -32,7 +32,7 @@ begin
   if room_user_id = auth.uid() then
     return true;
   else
-    return now() <= room_end_ts + interval '1 hour';
+    return now() <= room_end_ts + interval '30 minute';
   end if;
 end;
 $$ language plpgsql;
