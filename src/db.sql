@@ -20,15 +20,20 @@ create or replace function public.is_room_viewable(param_room_id uuid)
 returns boolean as $$
 declare
   room_end_ts TIMESTAMP WITH TIME ZONE;
+  room_user_id uuid;
 begin
   select
-    end_ts
+    end_ts, user_id
   into
-    room_end_ts
+    room_end_ts, room_user_id
   from rooms
   where id = param_room_id;
 
-  return now() <= room_end_ts + interval '1 hour';
+  if room_user_id = auth.uid() then
+    return true;
+  else
+    return now() <= room_end_ts + interval '1 hour';
+  end if;
 end;
 $$ language plpgsql;
 
