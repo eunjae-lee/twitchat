@@ -15,6 +15,9 @@ create policy "Can view any rooms." on rooms for select using (true);
 
 alter table rooms alter column begin_ts set not null;
 alter table rooms alter column end_ts set not null;
+alter table rooms add column user_name text not null default '';
+alter table rooms add column full_name text not null default '';
+alter table rooms add column picture text not null default '';
 
 create or replace function public.is_room_viewable(param_room_id uuid)
 returns boolean as $$
@@ -39,10 +42,26 @@ $$ language plpgsql;
 
 create or replace function public.tidy_room_before_insert()
 returns trigger as $$
+declare
+  admin_user_name text;
+  admin_full_name text;
+  admin_picture text;
 begin
+  select
+    (raw_user_meta_data->>'preferred_username') as c1,
+    (raw_user_meta_data->>'full_name') as c2,
+    (raw_user_meta_data->>'picture') as c3
+  into admin_user_name, admin_full_name, admin_picture
+  from auth.users
+  where id = auth.uid();
+
   -- provide default values for begin_ts and end_ts
   new.begin_ts := now();
   new.end_ts := now() + interval '2 hours';
+  new.user_id := auth.uid();
+  new.user_name := admin_user_name;
+  new.full_name := admin_full_name;
+  new.picture := admin_picture;
 
   return new;
 end;

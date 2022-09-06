@@ -272,6 +272,9 @@ export interface paths {
           updated_ts?: parameters["rowFilter.rooms.updated_ts"];
           begin_ts?: parameters["rowFilter.rooms.begin_ts"];
           end_ts?: parameters["rowFilter.rooms.end_ts"];
+          user_name?: parameters["rowFilter.rooms.user_name"];
+          full_name?: parameters["rowFilter.rooms.full_name"];
+          picture?: parameters["rowFilter.rooms.picture"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -330,6 +333,9 @@ export interface paths {
           updated_ts?: parameters["rowFilter.rooms.updated_ts"];
           begin_ts?: parameters["rowFilter.rooms.begin_ts"];
           end_ts?: parameters["rowFilter.rooms.end_ts"];
+          user_name?: parameters["rowFilter.rooms.user_name"];
+          full_name?: parameters["rowFilter.rooms.full_name"];
+          picture?: parameters["rowFilter.rooms.picture"];
         };
         header: {
           /** Preference */
@@ -352,6 +358,9 @@ export interface paths {
           updated_ts?: parameters["rowFilter.rooms.updated_ts"];
           begin_ts?: parameters["rowFilter.rooms.begin_ts"];
           end_ts?: parameters["rowFilter.rooms.end_ts"];
+          user_name?: parameters["rowFilter.rooms.user_name"];
+          full_name?: parameters["rowFilter.rooms.full_name"];
+          picture?: parameters["rowFilter.rooms.picture"];
         };
         body: {
           /** rooms */
@@ -375,6 +384,26 @@ export interface paths {
           args: {
             /** Format: text */
             param_slug: string;
+          };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/is_room_viewable": {
+    post: {
+      parameters: {
+        body: {
+          args: {
+            /** Format: uuid */
+            param_room_id: string;
           };
         };
         header: {
@@ -530,6 +559,21 @@ export interface definitions {
      * @default (now() + '02:00:00'::interval)
      */
     end_ts: string;
+    /**
+     * Format: text
+     * @default
+     */
+    user_name: string;
+    /**
+     * Format: text
+     * @default
+     */
+    full_name: string;
+    /**
+     * Format: text
+     * @default
+     */
+    picture: string;
   };
 }
 
@@ -626,6 +670,12 @@ export interface parameters {
   "rowFilter.rooms.begin_ts": string;
   /** Format: timestamp with time zone */
   "rowFilter.rooms.end_ts": string;
+  /** Format: text */
+  "rowFilter.rooms.user_name": string;
+  /** Format: text */
+  "rowFilter.rooms.full_name": string;
+  /** Format: text */
+  "rowFilter.rooms.picture": string;
 }
 
 export interface operations {}
