@@ -18,7 +18,7 @@
 
 		if ($session.user?.id) {
 			const room = await createRoom({ title });
-			goto(`/chat/${room.slug}`);
+			goto(`/c/${room.slug}`);
 		} else {
 			storePayloadToCreateRoomAfterSignIn({ title });
 			setRedirectionAfterSignIn('/new');
@@ -40,7 +40,7 @@
 				title = json.title;
 				submitting = true;
 				createRoom({ title }).then((room) => {
-					goto(`/chat/${room.slug}`);
+					goto(`/c/${room.slug}`);
 				});
 			}
 		}

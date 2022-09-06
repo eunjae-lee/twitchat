@@ -5,7 +5,7 @@ export const GET: RequestHandler = async ({ locals, params }) =>
 	withApiAuth(
 		{
 			user: locals.user,
-			redirectTo: `/sign_in?redirect_to=${encodeURIComponent(`/chat/${params.slug}`)}`,
+			redirectTo: `/sign_in?redirect_to=${encodeURIComponent(`/c/${params.slug}`)}`,
 		},
 		async () => {
 			return {
