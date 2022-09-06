@@ -12,13 +12,25 @@
 
 	let title: string;
 	let submitting: boolean;
+	let cannotCreate: boolean;
+
+	function createRoomAndGo(title: string) {
+		createRoom({ title })
+			.then((room) => {
+				goto(`/c/${room.slug}`);
+			})
+			.catch((error) => {
+				if (error.message === 'cannot create a room') {
+					cannotCreate = true;
+				}
+			});
+	}
 
 	async function onSubmit() {
 		submitting = true;
 
 		if ($session.user?.id) {
-			const room = await createRoom({ title });
-			goto(`/c/${room.slug}`);
+			createRoomAndGo(title);
 		} else {
 			storePayloadToCreateRoomAfterSignIn({ title });
 			setRedirectionAfterSignIn('/new');
@@ -39,9 +51,7 @@
 			if (json) {
 				title = json.title;
 				submitting = true;
-				createRoom({ title }).then((room) => {
-					goto(`/c/${room.slug}`);
-				});
+				createRoomAndGo(title);
 			}
 		}
 	}
@@ -71,13 +81,29 @@
 				<span class="label-text-alt">{t('titlePlaceholder')}</span>
 			</label>
 		</div>
-		<div class="mt-8 card-actions">
-			<button
-				type="submit"
-				class="btn btn-primary grow"
-				class:loading={submitting}
-				disabled={submitting}><span class="ml-2">{t('startNow')}</span></button
-			>
+		<div class="mt-8">
+			{#if cannotCreate}
+				<div class="alert alert-warning shadow-lg">
+					<div>
+						<svg class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+							><path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+							/></svg
+						>
+						<span>{t('cannotCreate')}</span>
+					</div>
+				</div>
+			{:else}
+				<button
+					type="submit"
+					class="btn btn-primary w-full"
+					class:loading={submitting}
+					disabled={submitting}><span class="ml-2">{t('startNow')}</span></button
+				>
+			{/if}
 		</div>
 	</form>
 </div>

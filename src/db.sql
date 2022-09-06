@@ -46,7 +46,16 @@ declare
   admin_user_name text;
   admin_full_name text;
   admin_picture text;
+
+  allowed_to_create boolean;
 begin
+  SELECT auth.uid() = ANY ('{"4872df12-6f57-457e-be21-67cca337e4c2","ea882074-19ad-459e-a710-fbf78947bc74","decfe743-6703-4789-9692-12c2999ad296","27e2a744-ae34-4bb0-bb3a-7367cab99e1e","a9f39f0b-7768-4359-900a-b7e7225aeec9","a91ea2c3-fa01-4c08-9305-6013fa313a51","fcf73f74-f4a6-4dd1-b4f6-212e0378f070","413ba069-e5b5-425b-9ea9-6d219e3f2551","afe0f771-7dfa-4d5c-bfd7-14c4f4db3768","460fad78-6e2c-42aa-8cd3-df8f77355982"}'::text[])
+  into allowed_to_create;
+
+  if allowed_to_create = false then
+    raise 'cannot create a room';
+  end if;
+
   select
     (raw_user_meta_data->>'preferred_username') as c1,
     (raw_user_meta_data->>'full_name') as c2,
