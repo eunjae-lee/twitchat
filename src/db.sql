@@ -16,6 +16,27 @@ create policy "Can view any rooms." on rooms for select using (true);
 alter table rooms alter column begin_ts set not null;
 alter table rooms alter column end_ts set not null;
 
+create or replace function public.is_room_viewable(param_room_id uuid)
+returns boolean as $$
+declare
+  room_end_ts TIMESTAMP WITH TIME ZONE;
+  room_user_id uuid;
+begin
+  select
+    end_ts, user_id
+  into
+    room_end_ts, room_user_id
+  from rooms
+  where id = param_room_id;
+
+  if room_user_id = auth.uid() then
+    return true;
+  else
+    return now() <= room_end_ts + interval '30 minute';
+  end if;
+end;
+$$ language plpgsql;
+
 create or replace function public.tidy_room_before_insert()
 returns trigger as $$
 begin
@@ -146,10 +167,15 @@ create or replace function participate_as_user(param_slug text)
 returns void as $$
   declare
     room_id uuid;
+    room_end_ts TIMESTAMP with time zone;
   begin
-    select id
-    into room_id
+    select id, end_ts
+    into room_id, room_end_ts
     from rooms where rooms.slug = param_slug;
+
+    if room_end_ts < now() then
+      raise 'room is closed';
+    end if;
 
     insert into participations (room_id, user_id, role)
     values (room_id, auth.uid(), 'user');
@@ -200,7 +226,7 @@ create policy "Can create own messages." on messages for insert with check (
   auth.uid() = user_id and is_participating(room_id)
 );
 create policy "Can view any messages in participating rooms." on messages for select using (
-  is_participating(room_id)
+  is_room_viewable(room_id) and is_participating(room_id)
 );
 
 create or replace function public.check_before_inserting_message()
