@@ -15,7 +15,9 @@
 	import type { Room as RoomType } from '$lib/types';
 	import { session } from '$app/stores';
 	import Room from '../../components/Room.svelte';
+	import { getSiteTitle, room as roomText, getter } from '$lib/text';
 
+	const t = getter(roomText);
 	export let slug: string;
 	const NEED_TO_JOIN = 'need_to_join';
 	const JOINED = 'joined';
@@ -41,9 +43,32 @@
 	}
 </script>
 
-{#if status === NEED_TO_JOIN}
-	Do you want to join this room?
-	<button type="button" on:click={join}>Join</button>
+{#if status === NEED_TO_JOIN && room}
+	<div class="container narrow-container mx-auto flex flex-col items-center">
+		<div class="mt-16 w-full">
+			<a href="/" class="-ml-4 btn btn-ghost normal-case text-xl">
+				<img src="/logo.png" alt="TwitChat logo" class="w-8" />
+				<span class="ml-2">{getSiteTitle()}</span>
+			</a>
+		</div>
+
+		<div><p class="mt-12 text-2xl">{room.title}</p></div>
+		<div class="mt-2 flex items-center">
+			<img
+				src={room.picture}
+				class="rounded-full w-6"
+				alt={`Profile picture of ${room.full_name}`}
+			/>
+			<span class="ml-2">{room.full_name}</span>
+			<span class="ml-1 text-sm opacity-75">(@{room.user_name})</span>
+		</div>
+		{#if new Date() < new Date(room.end_ts)}
+			<p class="mt-12 text-lg">{t('joinMessage')}</p>
+			<button class="mt-4 btn btn-primary" type="button" on:click={join}>{t('join')}</button>
+		{:else}
+			<p class="mt-12 text-lg">{t('roomClosed')}</p>
+		{/if}
+	</div>
 {:else if status === JOINED && room}
 	<Room {room} />
 {:else if status === LOADING}
