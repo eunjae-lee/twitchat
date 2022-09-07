@@ -5,3 +5,4 @@ export * from './signIn';
 export * from './newRoom';
 export * from './room';
 export * from './authenticated';
+export * from './duration';
