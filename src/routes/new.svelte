@@ -8,6 +8,7 @@
 	} from '$lib/auth';
 	import { createRoom, supabase } from '$lib/db';
 	import { getSiteTitle, getter, newRoom } from '$lib/text';
+	import RoomDuration from '../components/RoomDuration.svelte';
 	const t = getter(newRoom);
 
 	let title: string;
@@ -103,6 +104,7 @@
 					class:loading={submitting}
 					disabled={submitting}><span class="ml-2">{t('startNow')}</span></button
 				>
+				<div class="mt-2"><RoomDuration /></div>
 			{/if}
 		</div>
 	</form>

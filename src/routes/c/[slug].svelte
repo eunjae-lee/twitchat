@@ -15,9 +15,10 @@
 	import type { Room as RoomType } from '$lib/types';
 	import { session } from '$app/stores';
 	import Room from '../../components/Room.svelte';
-	import { getSiteTitle, room as roomText, getter } from '$lib/text';
+	import { getSiteTitle, room as roomText, newRoom as newRoomText, getter, merge } from '$lib/text';
+	import RoomDuration from '../../components/RoomDuration.svelte';
 
-	const t = getter(roomText);
+	const t = getter(merge(roomText, newRoomText));
 	export let slug: string;
 	const NEED_TO_JOIN = 'need_to_join';
 	const JOINED = 'joined';
@@ -37,6 +38,8 @@
 		}
 	}
 
+	$: canJoin = room && new Date() < new Date(room.end_ts);
+
 	async function join() {
 		await participate({ slug });
 		await checkParticipation();
@@ -52,6 +55,10 @@
 			</a>
 		</div>
 
+		{#if canJoin}
+			<p class="mt-12 text-xl">{t('joinMessage')}</p>
+		{/if}
+
 		<div><p class="mt-12 text-2xl">{room.title}</p></div>
 		<div class="mt-2 flex items-center">
 			<img
@@ -62,9 +69,10 @@
 			<span class="ml-2">{room.full_name}</span>
 			<span class="ml-1 text-sm opacity-75">(@{room.user_name})</span>
 		</div>
-		{#if new Date() < new Date(room.end_ts)}
-			<p class="mt-12 text-lg">{t('joinMessage')}</p>
-			<button class="mt-4 btn btn-primary" type="button" on:click={join}>{t('join')}</button>
+		{#if canJoin}
+			<button class="mt-12 w-full btn btn-primary" type="button" on:click={join}>{t('join')}</button
+			>
+			<div class="mt-2 w-full"><RoomDuration /></div>
 		{:else}
 			<p class="mt-12 text-lg">{t('roomClosed')}</p>
 		{/if}
