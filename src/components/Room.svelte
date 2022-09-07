@@ -2,7 +2,7 @@
 	import type { ChatItem, Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
 	import { subscribeToMessages, subscribeToParticipations } from '$lib/room';
-	import { onDestroy } from 'svelte';
+	import { afterUpdate, onDestroy } from 'svelte';
 	import { session } from '$app/stores';
 	import MessageView from './message/View.svelte';
 	import MessageComposer from './message/Composer.svelte';
@@ -16,6 +16,15 @@
 	let state: 'init' | 'active' | 'closed' = 'init';
 	let messageContainer: HTMLDivElement;
 	let chatItems: ChatItem[] = [];
+	let scrollToBottomAfterRendering: boolean;
+
+	function isScrollAlmostAtBottom() {
+		return (
+			Math.abs(
+				messageContainer.scrollTop + messageContainer.clientHeight - messageContainer.scrollHeight
+			) < 25
+		);
+	}
 
 	const {
 		state: roomState,
@@ -24,14 +33,10 @@
 	} = subscribeToMessages({
 		roomId: room.id,
 		onMessagesLoadedInitially: () => {
-			setTimeout(() => {
-				messageContainer.scrollTop = messageContainer.scrollHeight;
-			}, 100);
+			scrollToBottomAfterRendering = true;
 		},
 		onNewMessage: () => {
-			setTimeout(() => {
-				messageContainer.scrollTop = messageContainer.scrollHeight;
-			}, 100);
+			scrollToBottomAfterRendering = isScrollAlmostAtBottom();
 		},
 	});
 
@@ -44,6 +49,13 @@
 	onDestroy(() => {
 		unsubscribeMessages();
 		unsubscribeParticipations();
+	});
+
+	afterUpdate(() => {
+		if (scrollToBottomAfterRendering) {
+			messageContainer.scrollTop = messageContainer.scrollHeight;
+			scrollToBottomAfterRendering = false;
+		}
 	});
 
 	$: {
