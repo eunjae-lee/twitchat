@@ -1,8 +1,8 @@
 import { withApiAuth } from '@supabase/auth-helpers-sveltekit';
 import type { RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ locals, params }) =>
-	withApiAuth(
+export const GET: RequestHandler = async ({ locals, params, request }) => {
+	return withApiAuth(
 		{
 			user: locals.user,
 			redirectTo: `/sign_in?redirect_to=${encodeURIComponent(`/c/${params.slug}`)}`,
@@ -13,3 +13,4 @@ export const GET: RequestHandler = async ({ locals, params }) =>
 			};
 		}
 	);
+};

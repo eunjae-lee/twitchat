@@ -1,3 +1,17 @@
+<script context="module" lang="ts">
+	import type { LoadEvent } from '@sveltejs/kit';
+	import { getOpenGraphData } from '$lib/room';
+
+	export async function load({ session, url }: LoadEvent) {
+		const slug = url.searchParams.get('redirect_to')?.replace('/c/', '');
+		return {
+			props: {
+				og: await getOpenGraphData({ slug, lang: session.lang }),
+			},
+		};
+	}
+</script>
+
 <script lang="ts">
 	import { setRedirectionAfterSignIn } from '$lib/auth';
 
@@ -5,8 +19,10 @@
 
 	import { getter, signIn } from '$lib/text';
 	import { onMount } from 'svelte';
+	import type { OpenGraphData } from '$lib/types';
 	const t = getter(signIn);
 
+	export let og: OpenGraphData;
 	let signingIn: boolean = false;
 
 	async function signInWithTwitter() {
@@ -28,7 +44,23 @@
 </script>
 
 <svelte:head>
-	<title>{t('title')}</title>
+	<title>{og.title}</title>
+	<meta name="description" content={og.description} />
+	<meta name="author" content={og.author} />
+
+	<!-- Facebook Meta Tags -->
+	<meta property="og:url" content={og.url} />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content={og.title} />
+	<meta property="og:description" content={og.description} />
+	<meta property="og:image" content={og.image} />
+
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content={og.url} />
+	<meta name="twitter:title" content={og.title} />
+	<meta name="twitter:description" content={og.description} />
+	<meta name="twitter:image" content={og.image} />
 </svelte:head>
 
 <div class="container mx-auto max-w-xs md:max-w-sm h-screen flex flex-col justify-center">
