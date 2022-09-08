@@ -23,3 +23,11 @@ export type ChatItem =
 			created_ts: string;
 			participation: Participation;
 	  };
+
+export type OpenGraphData = {
+	title: string;
+	description: string;
+	url: string;
+	image: string;
+	author: string;
+};

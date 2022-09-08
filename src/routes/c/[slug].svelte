@@ -1,10 +1,12 @@
 <script context="module" lang="ts">
 	import type { LoadEvent } from '@sveltejs/kit';
+	import { getOpenGraphData } from '$lib/room';
 
-	export function load({ params }: LoadEvent) {
+	export async function load({ params, session }: LoadEvent) {
 		return {
 			props: {
 				slug: params.slug,
+				og: await getOpenGraphData({ slug: params.slug, lang: session.lang }),
 			},
 		};
 	}
@@ -12,7 +14,7 @@
 
 <script lang="ts">
 	import { getRoom, isParticipating, participate } from '$lib/db';
-	import type { Room as RoomType } from '$lib/types';
+	import type { OpenGraphData, Room as RoomType } from '$lib/types';
 	import { session } from '$app/stores';
 	import Room from '../../components/Room.svelte';
 	import { getSiteTitle, room as roomText, newRoom as newRoomText, getter, merge } from '$lib/text';
@@ -20,6 +22,8 @@
 
 	const t = getter(merge(roomText, newRoomText));
 	export let slug: string;
+	export let og: OpenGraphData;
+
 	const NEED_TO_JOIN = 'need_to_join';
 	const JOINED = 'joined';
 	const LOADING = 'loading';
@@ -45,6 +49,26 @@
 		await checkParticipation();
 	}
 </script>
+
+<svelte:head>
+	<title>{og.title}</title>
+	<meta name="description" content={og.description} />
+	<meta name="author" content={og.author} />
+
+	<!-- Facebook Meta Tags -->
+	<meta property="og:url" content={og.url} />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content={og.title} />
+	<meta property="og:description" content={og.description} />
+	<meta property="og:image" content={og.image} />
+
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content={og.url} />
+	<meta name="twitter:title" content={og.title} />
+	<meta name="twitter:description" content={og.description} />
+	<meta name="twitter:image" content={og.image} />
+</svelte:head>
 
 {#if status === NEED_TO_JOIN && room}
 	<div class="container narrow-container mx-auto flex flex-col items-center">
