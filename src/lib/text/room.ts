@@ -6,6 +6,8 @@ const en = {
 	joinMessage: 'Do you want to join this room?',
 	join: 'Join',
 	roomClosed: 'This room already has been closed.',
+	admin: 'Admin',
+	renameTitle: 'Rename the title',
 };
 
 const ko: typeof en = {
@@ -16,6 +18,8 @@ const ko: typeof en = {
 	joinMessage: '이 방에 참여하시겠어요?',
 	join: '참여하기',
 	roomClosed: '이 방은 이미 종료되었습니다.',
+	admin: '관리자',
+	renameTitle: '방 제목 바꾸기',
 };
 
 export const room = {

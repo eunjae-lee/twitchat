@@ -18,3 +18,7 @@ export async function getRoom({ slug }: { slug: string }) {
 	const { data } = await supabase.from<Room>('rooms').select('*').eq('slug', slug);
 	return data?.[0];
 }
+
+export async function renameRoom({ roomId, title }: { roomId: string; title: string }) {
+	return await supabase.from<Room>('rooms').update({ title }).eq('id', roomId);
+}
