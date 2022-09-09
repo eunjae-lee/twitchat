@@ -275,6 +275,7 @@ export interface paths {
           user_name?: parameters["rowFilter.rooms.user_name"];
           full_name?: parameters["rowFilter.rooms.full_name"];
           picture?: parameters["rowFilter.rooms.picture"];
+          lang?: parameters["rowFilter.rooms.lang"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -336,6 +337,7 @@ export interface paths {
           user_name?: parameters["rowFilter.rooms.user_name"];
           full_name?: parameters["rowFilter.rooms.full_name"];
           picture?: parameters["rowFilter.rooms.picture"];
+          lang?: parameters["rowFilter.rooms.lang"];
         };
         header: {
           /** Preference */
@@ -361,6 +363,7 @@ export interface paths {
           user_name?: parameters["rowFilter.rooms.user_name"];
           full_name?: parameters["rowFilter.rooms.full_name"];
           picture?: parameters["rowFilter.rooms.picture"];
+          lang?: parameters["rowFilter.rooms.lang"];
         };
         body: {
           /** rooms */
@@ -574,6 +577,11 @@ export interface definitions {
      * @default
      */
     picture: string;
+    /**
+     * Format: text
+     * @default en
+     */
+    lang: string;
   };
 }
 
@@ -676,6 +684,8 @@ export interface parameters {
   "rowFilter.rooms.full_name": string;
   /** Format: text */
   "rowFilter.rooms.picture": string;
+  /** Format: text */
+  "rowFilter.rooms.lang": string;
 }
 
 export interface operations {}

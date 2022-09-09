@@ -18,6 +18,7 @@ alter table rooms alter column end_ts set not null;
 alter table rooms add column user_name text not null default '';
 alter table rooms add column full_name text not null default '';
 alter table rooms add column picture text not null default '';
+alter table rooms add column lang text not null default 'en';
 
 create or replace function public.is_room_viewable(param_room_id uuid)
 returns boolean as $$
@@ -49,7 +50,7 @@ declare
 
   allowed_to_create boolean;
 begin
-  SELECT auth.uid() = ANY ('{"4872df12-6f57-457e-be21-67cca337e4c2","ea882074-19ad-459e-a710-fbf78947bc74","decfe743-6703-4789-9692-12c2999ad296","27e2a744-ae34-4bb0-bb3a-7367cab99e1e","a9f39f0b-7768-4359-900a-b7e7225aeec9","a91ea2c3-fa01-4c08-9305-6013fa313a51","fcf73f74-f4a6-4dd1-b4f6-212e0378f070","413ba069-e5b5-425b-9ea9-6d219e3f2551","afe0f771-7dfa-4d5c-bfd7-14c4f4db3768","460fad78-6e2c-42aa-8cd3-df8f77355982"}'::text[])
+  SELECT auth.uid()::text = ANY ('{"4872df12-6f57-457e-be21-67cca337e4c2","ea882074-19ad-459e-a710-fbf78947bc74","decfe743-6703-4789-9692-12c2999ad296","27e2a744-ae34-4bb0-bb3a-7367cab99e1e","a9f39f0b-7768-4359-900a-b7e7225aeec9","a91ea2c3-fa01-4c08-9305-6013fa313a51","fcf73f74-f4a6-4dd1-b4f6-212e0378f070","413ba069-e5b5-425b-9ea9-6d219e3f2551","afe0f771-7dfa-4d5c-bfd7-14c4f4db3768","460fad78-6e2c-42aa-8cd3-df8f77355982"}'::text[])
   into allowed_to_create;
 
   if allowed_to_create = false then
@@ -63,6 +64,10 @@ begin
   into admin_user_name, admin_full_name, admin_picture
   from auth.users
   where id = auth.uid();
+
+  if new.lang != 'ko' then
+    new.lang := 'en';
+  end if;
 
   -- provide default values for begin_ts and end_ts
   new.begin_ts := now();
@@ -92,6 +97,7 @@ begin
     new.updated_ts := old.updated_ts;
     new.begin_ts := old.begin_ts;
     new.end_ts := old.end_ts;
+    new.lang := old.lang;
   end if;
 
   return new;

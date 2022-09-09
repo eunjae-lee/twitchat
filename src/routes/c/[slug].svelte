@@ -2,11 +2,11 @@
 	import type { LoadEvent } from '@sveltejs/kit';
 	import { getOpenGraphData } from '$lib/room';
 
-	export async function load({ params, session }: LoadEvent) {
+	export async function load({ params }: LoadEvent) {
 		return {
 			props: {
 				slug: params.slug,
-				og: await getOpenGraphData({ slug: params.slug, lang: session.lang }),
+				og: await getOpenGraphData({ slug: params.slug }),
 			},
 		};
 	}

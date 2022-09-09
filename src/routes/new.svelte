@@ -8,15 +8,18 @@
 	} from '$lib/auth';
 	import { createRoom, supabase } from '$lib/db';
 	import { getSiteTitle, getter, newRoom } from '$lib/text';
+	import type { Lang } from '$lib/types';
+	import { getContext } from 'svelte';
 	import RoomDuration from '../components/RoomDuration.svelte';
 	const t = getter(newRoom);
+	const lang = getContext<Lang>('lang');
 
 	let title: string;
 	let submitting: boolean;
 	let cannotCreate: boolean;
 
 	function createRoomAndGo(title: string) {
-		createRoom({ title })
+		createRoom({ title, lang })
 			.then((room) => {
 				goto(`/c/${room.slug}`);
 			})
