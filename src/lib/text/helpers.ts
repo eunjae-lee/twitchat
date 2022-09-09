@@ -11,13 +11,13 @@ const getSiteTitle = () => {
 	return getText(common, 'title');
 };
 
-const getText = <TKey extends string>(dictionary: Dictionary<TKey>, key: TKey) => {
-	const lang = getContext('lang') as Lang;
-	return dictionary[lang][key];
+const getText = <TKey extends string>(dictionary: Dictionary<TKey>, key: TKey, lang?: Lang) => {
+	return dictionary[lang ?? getContext('lang') ?? 'en'][key];
 };
 
 const getter = <TKey extends string>(dictionary: Dictionary<TKey>) => {
-	return (key: TKey) => getText(dictionary, key);
+	const lang = getContext('lang') as Lang;
+	return (key: TKey) => getText(dictionary, key, lang);
 };
 
 const merge = <TKey1 extends string, TKey2 extends string>(
