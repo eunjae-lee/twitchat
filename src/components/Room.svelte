@@ -105,39 +105,41 @@
 			/>
 		</div>
 
-		<div class="dropdown dropdown-end">
-			<label for="menu" tabindex="0" class="btn btn-square btn-ghost m-1"
-				><svg fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"
-					><path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M4 6h16M4 12h16M4 18h16"
-					/></svg
-				></label
-			>
-			<ul
-				id="menu"
-				tabindex="0"
-				class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52"
-			>
-				<li class="uppercase text-xs px-4 py-4 font-extrabold">{t('admin')}</li>
-				<li>
-					<button
-						type="button"
-						on:click={async () => {
-							const newTitle = prompt(t('renameTitle'), room.title);
-							if (newTitle !== null) {
-								const { data, error } = await renameRoom({ roomId: room.id, title: newTitle });
-								if (!error) {
-									room = data[0];
+		{#if room.user_id === $session.user.id}
+			<div class="dropdown dropdown-end">
+				<label for="menu" tabindex="0" class="btn btn-square btn-ghost m-1"
+					><svg fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"
+						><path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 6h16M4 12h16M4 18h16"
+						/></svg
+					></label
+				>
+				<ul
+					id="menu"
+					tabindex="0"
+					class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52"
+				>
+					<li class="uppercase text-xs px-4 py-4 font-extrabold">{t('admin')}</li>
+					<li>
+						<button
+							type="button"
+							on:click={async () => {
+								const newTitle = prompt(t('renameTitle'), room.title);
+								if (newTitle !== null) {
+									const { data, error } = await renameRoom({ roomId: room.id, title: newTitle });
+									if (!error) {
+										room = data[0];
+									}
 								}
-							}
-						}}>{t('renameTitle')}</button
-					>
-				</li>
-			</ul>
-		</div>
+							}}>{t('renameTitle')}</button
+						>
+					</li>
+				</ul>
+			</div>
+		{/if}
 	</div>
 </div>
 

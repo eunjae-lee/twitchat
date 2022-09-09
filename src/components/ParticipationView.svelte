@@ -12,7 +12,3 @@
 	>
 	{t('entered')}
 </p>
-
-<div class="flex justify-center">
-	<hr class="border-base-content opacity-50 w-4" />
-</div>
