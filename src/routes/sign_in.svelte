@@ -2,11 +2,11 @@
 	import type { LoadEvent } from '@sveltejs/kit';
 	import { getOpenGraphData } from '$lib/room';
 
-	export async function load({ session, url }: LoadEvent) {
+	export async function load({ url }: LoadEvent) {
 		const slug = url.searchParams.get('redirect_to')?.replace('/c/', '');
 		return {
 			props: {
-				og: await getOpenGraphData({ slug, lang: session.lang }),
+				og: await getOpenGraphData({ slug }),
 			},
 		};
 	}
