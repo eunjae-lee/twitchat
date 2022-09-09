@@ -380,6 +380,116 @@ export interface paths {
       };
     };
   };
+  "/accounts": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.accounts.id"];
+          user_id?: parameters["rowFilter.accounts.user_id"];
+          plan?: parameters["rowFilter.accounts.plan"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["accounts"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** accounts */
+          accounts?: definitions["accounts"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.accounts.id"];
+          user_id?: parameters["rowFilter.accounts.user_id"];
+          plan?: parameters["rowFilter.accounts.plan"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.accounts.id"];
+          user_id?: parameters["rowFilter.accounts.user_id"];
+          plan?: parameters["rowFilter.accounts.plan"];
+        };
+        body: {
+          /** accounts */
+          accounts?: definitions["accounts"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/rpc/can_create_room": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
   "/rpc/participate_as_user": {
     post: {
       parameters: {
@@ -428,6 +538,23 @@ export interface paths {
             /** Format: uuid */
             param_room_id: string;
           };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
+  "/rpc/clean_up_old_rooms_and_messages": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
         };
         header: {
           /** Preference */
@@ -583,6 +710,22 @@ export interface definitions {
      */
     lang: string;
   };
+  accounts: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /** Format: uuid */
+    user_id: string;
+    /**
+     * Format: text
+     * @default basic
+     */
+    plan: string;
+  };
 }
 
 export interface parameters {
@@ -686,6 +829,14 @@ export interface parameters {
   "rowFilter.rooms.picture": string;
   /** Format: text */
   "rowFilter.rooms.lang": string;
+  /** @description accounts */
+  "body.accounts": definitions["accounts"];
+  /** Format: uuid */
+  "rowFilter.accounts.id": string;
+  /** Format: uuid */
+  "rowFilter.accounts.user_id": string;
+  /** Format: text */
+  "rowFilter.accounts.plan": string;
 }
 
 export interface operations {}

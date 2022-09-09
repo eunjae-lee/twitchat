@@ -16,7 +16,8 @@
 
 	let title: string;
 	let submitting: boolean;
-	let cannotCreate: boolean;
+	let notAllowedToCreateRoom: boolean;
+	let cannotCreateAnotherRoom: boolean;
 
 	function createRoomAndGo(title: string) {
 		createRoom({ title, lang })
@@ -24,8 +25,10 @@
 				goto(`/c/${room.slug}`);
 			})
 			.catch((error) => {
-				if (error.message === 'cannot create a room') {
-					cannotCreate = true;
+				if (error.message === 'not allowed to create a room') {
+					notAllowedToCreateRoom = true;
+				} else if (error.message === 'cannot create another room') {
+					cannotCreateAnotherRoom = true;
 				}
 			});
 	}
@@ -86,7 +89,7 @@
 			</label>
 		</div>
 		<div class="mt-8">
-			{#if cannotCreate}
+			{#if notAllowedToCreateRoom || cannotCreateAnotherRoom}
 				<div class="alert alert-warning shadow-lg">
 					<div>
 						<svg class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -97,7 +100,11 @@
 								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
 							/></svg
 						>
-						<span>{t('cannotCreate')}</span>
+						{#if notAllowedToCreateRoom}
+							<span>{t('notAllowedToCreateRoom')}</span>
+						{:else if cannotCreateAnotherRoom}
+							<span>{t('cannotCreateAnotherRoom')}</span>
+						{/if}
 					</div>
 				</div>
 			{:else}
@@ -107,7 +114,7 @@
 					class:loading={submitting}
 					disabled={submitting}><span class="ml-2">{t('startNow')}</span></button
 				>
-				<div class="mt-2"><RoomDuration /></div>
+				<div class="mt-2"><RoomDuration creating={true} /></div>
 			{/if}
 		</div>
 	</form>

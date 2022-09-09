@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { getter, duration } from '$lib/text';
+
+	export let creating: boolean = false;
+
 	const t = getter(duration);
 	let showingDurationInfo: boolean;
 </script>
@@ -28,6 +31,9 @@
 			<li>{t('durationMessage1')}</li>
 			<li>{t('durationMessage2')}</li>
 			<li>{t('durationMessage3')}</li>
+			{#if creating}
+				<li>{t('durationMessage4')}</li>
+			{/if}
 		</ol>
 	</div>
 {/if}
