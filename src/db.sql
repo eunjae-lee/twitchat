@@ -285,3 +285,23 @@ $$ language plpgsql security definer;
 create trigger on_message_inserted
   before insert on public.messages
   for each row execute procedure public.check_before_inserting_message();
+
+-- https://supabase.com/blog/postgres-as-a-cron-server
+create or replace function public.clean_up_old_rooms_and_messages()
+returns void as $$
+begin
+  delete from messages where room_id in (
+    select id from rooms where end_ts + '7 day' < now()
+  );
+  delete from rooms where end_ts + '7 day' < now();
+end;
+$$ language plpgsql;
+
+select
+  cron.schedule(
+    'clean-up-old-rooms-and-messages',
+    '0 * * * *',
+    $$
+    select clean_up_old_rooms_and_messages;
+    $$
+  );
