@@ -24,14 +24,15 @@
 			</div>
 		{:else}
 			<div class="flex gap-2">
-				<img
-					class="mt-1 rounded-full w-12 h-12"
-					src={participation.picture}
-					alt={`Profile picture of ${participation.full_name}`}
-				/>
+				<a href={`https://twitter.com/${participation.user_name}`} target="_blank"
+					><img
+						class="mt-1 rounded-full w-12 h-12"
+						src={participation.picture}
+						alt={`Profile picture of ${participation.full_name}`}
+					/></a
+				>
 				<div>
 					<p class="text-sm">{participation.full_name}</p>
-					<p class="text-xs opacity-75">@{participation.user_name}</p>
 					<div class="flex items-end gap-2">
 						<Bubble content={message.content} />
 						<span class="text-xs opacity-75 mb-1">{messageTime}</span>
