@@ -90,13 +90,6 @@ declare
   allowed_to_create boolean;
   can_create_another_room boolean;
 begin
-  SELECT auth.uid()::text = ANY ('{"4872df12-6f57-457e-be21-67cca337e4c2","ea882074-19ad-459e-a710-fbf78947bc74","decfe743-6703-4789-9692-12c2999ad296","27e2a744-ae34-4bb0-bb3a-7367cab99e1e","a9f39f0b-7768-4359-900a-b7e7225aeec9","a91ea2c3-fa01-4c08-9305-6013fa313a51","fcf73f74-f4a6-4dd1-b4f6-212e0378f070","413ba069-e5b5-425b-9ea9-6d219e3f2551","afe0f771-7dfa-4d5c-bfd7-14c4f4db3768","460fad78-6e2c-42aa-8cd3-df8f77355982"}'::text[])
-  into allowed_to_create;
-
-  if allowed_to_create = false then
-    raise 'not allowed to create a room';
-  end if;
-
   select can_create_room()
   into can_create_another_room;
 
@@ -114,6 +107,13 @@ begin
 
   if new.lang != 'ko' then
     new.lang := 'en';
+  end if;
+
+  SELECT admin_user_name = ANY ('{"eunjae_lee","eunjae_lee_ko","twitchat_app","chaewon_dev","changerlemond","bohynkang","83tt3r","boyeonihn","ramgee66","sudokeepcoding","dylayed","autumn_bom","channprj","uphill_gosu","yyijoo","gaebalgombal","imperativ2nxtlv","doomydoomydooms"}'::text[])
+  into allowed_to_create;
+
+  if allowed_to_create = false then
+    raise 'not allowed to create a room';
   end if;
 
   -- provide default values for begin_ts and end_ts
