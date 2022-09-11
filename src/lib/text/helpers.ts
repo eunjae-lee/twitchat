@@ -11,6 +11,10 @@ const getSiteTitle = () => {
 	return getText(common, 'title');
 };
 
+const getSiteDescription = () => {
+	return getText(common, 'metaDescription');
+};
+
 const getText = <TKey extends string>(dictionary: Dictionary<TKey>, key: TKey, lang?: Lang) => {
 	return dictionary[lang ?? getContext('lang') ?? 'en'][key];
 };
@@ -36,4 +40,4 @@ const merge = <TKey1 extends string, TKey2 extends string>(
 	};
 };
 
-export { getSiteTitle, getter, merge };
+export { getSiteTitle, getSiteDescription, getter, merge };
