@@ -96,7 +96,7 @@
 		{#if canJoin}
 			<button class="mt-12 w-full btn btn-primary" type="button" on:click={join}>{t('join')}</button
 			>
-			<div class="mt-2 w-full"><RoomDuration /></div>
+			<div class="mt-2 w-full"><RoomDuration end_ts={room.end_ts} /></div>
 		{:else}
 			<p class="mt-12 text-lg">{t('roomClosed')}</p>
 		{/if}
