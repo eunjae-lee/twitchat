@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as Sentry from '@sentry/browser';
 	import { goto } from '$app/navigation';
 	import { session } from '$app/stores';
 	import { popRedirectionAfterSignIn } from '$lib/auth';
@@ -16,6 +17,19 @@
 		const sessionExists = $session.user && $session.user.id;
 
 		if (sessionExists && beingRedirectedFromTwitter) {
+			const redirectTo = popRedirectionAfterSignIn();
+			if (redirectTo && redirectTo.startsWith('/')) {
+				goto(redirectTo);
+			}
+		} else {
+			Sentry.captureEvent({
+				message: 'authenticated malfunctioning',
+				extra: {
+					sessionExists,
+					beingRedirectedFromTwitter,
+					hash: window.location.hash,
+				},
+			});
 			const redirectTo = popRedirectionAfterSignIn();
 			if (redirectTo && redirectTo.startsWith('/')) {
 				goto(redirectTo);
