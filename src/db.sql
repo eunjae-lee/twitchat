@@ -195,7 +195,9 @@ create trigger on_participation_before_update
 
 
 create or replace function is_participating(param_room_id uuid)
-returns boolean as $$
+returns boolean
+security definer set search_path = public
+as $$
   select exists
     (
       select 1
@@ -223,7 +225,7 @@ where
 
 alter table participations enable row level security;
 create policy "Can create own participations" on participations for insert with check (auth.uid() = user_id);
-create policy "Can view own participations." on participations for select using (true);
+create policy "Can view own participations." on participations for select using (is_participating(room_id));
 create policy "Can update own participations." on participations for update using (auth.uid() = user_id);
 
 alter table participations add column user_name text;
