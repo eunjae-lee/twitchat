@@ -31,7 +31,8 @@
 	}
 
 	function onKeyDown(event: KeyboardEvent) {
-		if (event.metaKey && event.key === 'Enter') {
+		if (!event.shiftKey && event.key === 'Enter') {
+			event.preventDefault();
 			onSubmit();
 		}
 	}
