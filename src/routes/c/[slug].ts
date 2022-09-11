@@ -1,7 +1,7 @@
 import { withApiAuth } from '@supabase/auth-helpers-sveltekit';
 import type { RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ locals, params, request }) => {
+export const GET: RequestHandler = async ({ locals, params }) => {
 	return withApiAuth(
 		{
 			user: locals.user,
