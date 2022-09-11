@@ -41,7 +41,7 @@
 
 <form class="fixed w-full bottom-0 p-3 flex gap-2" on:submit|preventDefault={onSubmit}>
 	<textarea
-		class="w-full textarea textarea-primary"
+		class="w-full text-base leading-7 textarea textarea-primary"
 		bind:value={message}
 		style:height="{inputHeight}rem"
 		placeholder={t('placeholder')}
