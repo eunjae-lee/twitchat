@@ -40,7 +40,7 @@
 	$: inputHeight = message.split('\n').length * 2;
 </script>
 
-<form class="fixed w-full bottom-0 p-3 flex gap-2" on:submit|preventDefault={onSubmit}>
+<form class="w-full p-3 flex gap-2" on:submit|preventDefault={onSubmit}>
 	<textarea
 		class="w-full text-base leading-7 textarea textarea-primary"
 		bind:value={message}
