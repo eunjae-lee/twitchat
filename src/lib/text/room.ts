@@ -8,6 +8,7 @@ const en = {
 	roomClosed: 'This room already has been closed.',
 	admin: 'Admin',
 	renameTitle: 'Rename the title',
+	gotoBottom: 'Go to bottom',
 };
 
 const ko: typeof en = {
@@ -20,6 +21,7 @@ const ko: typeof en = {
 	roomClosed: '이 방은 이미 종료되었습니다.',
 	admin: '관리자',
 	renameTitle: '방 제목 바꾸기',
+	gotoBottom: '맨 아래로 가기',
 };
 
 export const room = {

@@ -18,6 +18,7 @@
 	let messageContainer: HTMLDivElement;
 	let chatItems: ChatItem[] = [];
 	let scrollToBottomAfterRendering: boolean;
+	let showGoToBottomButton: number = 0;
 
 	function isScrollAlmostAtBottom() {
 		return (
@@ -38,6 +39,9 @@
 		},
 		onNewMessage: () => {
 			scrollToBottomAfterRendering = isScrollAlmostAtBottom();
+			if (!scrollToBottomAfterRendering) {
+				showGoToBottomButton += 1;
+			}
 		},
 	});
 
@@ -168,7 +172,33 @@
 		{/each}
 	</div>
 
-	<div class="grow-0 shrink-0">
+	<div class="grow-0 shrink-0 relative">
+		{#if showGoToBottomButton > 0}
+			<div class="absolute w-full -top-12 flex justify-center">
+				<button
+					class="btn btn-ghost bg-base-100 opacity-75"
+					on:click={() => {
+						messageContainer.scrollTop = messageContainer.scrollHeight;
+						showGoToBottomButton = 0;
+					}}
+				>
+					<svg
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="w-4 h-4 mr-1"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75"
+						/>
+					</svg>
+					{t('gotoBottom')} <span class="ml-1 text-xs">({showGoToBottomButton})</span></button
+				>
+			</div>
+		{/if}
 		<MessageComposer active={state === 'active'} {room} />
 	</div>
 </div>
