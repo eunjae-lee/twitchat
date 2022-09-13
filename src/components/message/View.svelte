@@ -62,7 +62,7 @@
 			</div>
 		{:else}
 			<div class="flex gap-2">
-				<a href={`https://twitter.com/${participation.user_name}`} target="_blank"
+				<a class="shrink-0" href={`https://twitter.com/${participation.user_name}`} target="_blank"
 					><img
 						class="mt-1 rounded-full w-12 h-12"
 						src={participation.picture}
