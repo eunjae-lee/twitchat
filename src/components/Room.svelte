@@ -1,4 +1,5 @@
 <script lang="ts">
+	import debounce from 'just-debounce';
 	import type { ChatItem, Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
 	import { subscribeToMessages, subscribeToParticipations } from '$lib/room';
@@ -60,7 +61,7 @@
 
 	onMount(() => {
 		updateVHUnit();
-		window.addEventListener('resize', updateVHUnit);
+		window.addEventListener('resize', debounce(updateVHUnit, 100));
 	});
 
 	onDestroy(() => {
