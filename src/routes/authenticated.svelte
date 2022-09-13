@@ -9,13 +9,10 @@
 	let state: 'loading' | 'missing_email' = 'loading';
 	let showingWhy: boolean = false;
 
-	const beingRedirectedFromTwitter =
-		typeof window !== 'undefined' && window.location.hash.startsWith('#access_token=');
-
 	$: {
 		const sessionExists = $session.user && $session.user.id;
 
-		if (sessionExists && beingRedirectedFromTwitter) {
+		if (sessionExists) {
 			const redirectTo = popRedirectionAfterSignIn();
 			if (redirectTo && redirectTo.startsWith('/')) {
 				goto(redirectTo);
