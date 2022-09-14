@@ -30,9 +30,13 @@
 
 	let status: 'need_to_join' | 'joined' | 'loading' = LOADING;
 	let room: RoomType | undefined;
+	let notFound: boolean = false;
 
 	async function checkParticipation() {
 		room = (await getRoom({ slug }))!;
+		if (!room) {
+			notFound = true;
+		}
 		status = (await isParticipating({ slug, user_id: $session.user.id })) ? JOINED : NEED_TO_JOIN;
 	}
 
@@ -51,7 +55,7 @@
 </script>
 
 <svelte:head>
-	<title>{og.title}</title>
+	<title>{notFound ? 'Room not found | TwitChat' : og.title}</title>
 	<meta name="description" content={og.description} />
 	<meta name="author" content={og.author} />
 
@@ -69,6 +73,10 @@
 	<meta name="twitter:description" content={og.description} />
 	<meta name="twitter:image" content={og.image} />
 </svelte:head>
+
+{#if notFound}
+	<div class="flex h-screen justify-center items-center">Room not found</div>
+{/if}
 
 {#if status === NEED_TO_JOIN && room}
 	<div class="container narrow-container mx-auto flex flex-col items-center">
