@@ -9,6 +9,7 @@ const en = {
 	admin: 'Admin',
 	renameTitle: 'Rename the title',
 	gotoBottom: 'Go to bottom',
+	participants: 'Participants',
 };
 
 const ko: typeof en = {
@@ -22,6 +23,7 @@ const ko: typeof en = {
 	admin: '관리자',
 	renameTitle: '방 제목 바꾸기',
 	gotoBottom: '맨 아래로 가기',
+	participants: '참여자',
 };
 
 export const room = {

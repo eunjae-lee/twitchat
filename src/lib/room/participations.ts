@@ -4,6 +4,7 @@ import type { RealtimeSubscription } from '@supabase/realtime-js';
 import { writable } from 'svelte/store';
 
 export function subscribeToParticipations(roomId: string) {
+	const participationList = writable<Participation[]>([]);
 	const participationMap = writable<Record<string, Participation>>({});
 	const state = writable<'init' | 'subscribed'>('init');
 
@@ -13,6 +14,11 @@ export function subscribeToParticipations(roomId: string) {
 			participationMap.update((map) => {
 				map[payload.new.user_id] = payload.new;
 				return map;
+			});
+
+			participationList.update((list) => {
+				list.push(payload.new);
+				return list;
 			});
 		})
 		.subscribe((event: string) => {
@@ -28,6 +34,11 @@ export function subscribeToParticipations(roomId: string) {
 				return map;
 			});
 		});
+
+		participationList.update((list) => {
+			list.push(...result);
+			return list;
+		});
 	});
 
 	function unsubscribe() {
@@ -37,5 +48,5 @@ export function subscribeToParticipations(roomId: string) {
 		}
 	}
 
-	return { state, participationMap, unsubscribe };
+	return { state, participationMap, participationList, unsubscribe };
 }

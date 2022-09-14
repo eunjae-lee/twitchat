@@ -48,6 +48,7 @@
 	const {
 		state: participationsState,
 		participationMap,
+		participationList,
 		unsubscribe: unsubscribeParticipations,
 	} = subscribeToParticipations(room.id);
 
@@ -110,32 +111,30 @@
 			<p class="ml-3 text-xl keep-all" title={room.title}>{room.title}</p>
 		</div>
 		<div class="flex-none">
-			<div class="absolute top-4 right-4">
-				<CountDown
-					end_ts={room.end_ts}
-					onClosed={() => {
-						state = 'closed';
-					}}
-				/>
-			</div>
+			<CountDown
+				end_ts={room.end_ts}
+				onClosed={() => {
+					state = 'closed';
+				}}
+			/>
 
-			{#if room.user_id === $session.user.id}
-				<div class="dropdown dropdown-end">
-					<label for="menu" tabindex="0" class="btn btn-square btn-ghost m-1"
-						><svg fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"
-							><path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							/></svg
-						></label
-					>
-					<ul
-						id="menu"
-						tabindex="0"
-						class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52"
-					>
+			<div class="dropdown dropdown-end">
+				<label for="menu" tabindex="0" class="btn btn-square btn-ghost m-1"
+					><svg fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"
+						><path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 6h16M4 12h16M4 18h16"
+						/></svg
+					></label
+				>
+				<ul
+					id="menu"
+					tabindex="0"
+					class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52"
+				>
+					{#if room.user_id === $session.user.id}
 						<li class="uppercase text-xs px-4 py-4 font-extrabold">{t('admin')}</li>
 						<li>
 							<button
@@ -151,9 +150,17 @@
 								}}>{t('renameTitle')}</button
 							>
 						</li>
-					</ul>
-				</div>
-			{/if}
+						<li class="border-b border-base-content" />
+					{/if}
+					<li>
+						<label for="modal-participants" class="modal-button"
+							><span>{t('participants')}</span><span class="text-xs"
+								>({$participationList.length})</span
+							></label
+						>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 
@@ -202,6 +209,30 @@
 		<MessageComposer active={state === 'active'} {room} />
 	</div>
 </div>
+
+<input type="checkbox" id="modal-participants" class="modal-toggle" />
+<label for="modal-participants" class="modal modal-bottom sm:modal-middle cursor-pointer">
+	<label class="modal-box" for="">
+		<h3 class="font-bold text-lg">{t('participants')}</h3>
+		<ul class="mt-8 flex flex-col gap-4">
+			{#each $participationList as participation (participation.id)}
+				<li>
+					<a
+						class="flex items-center gap-2"
+						href={`https://twitter.com/${participation.user_name}`}
+						target="_blank"
+						><img
+							class="shrink-0 rounded-full w-8 h-8"
+							src={participation.picture}
+							alt={`Profile picture of ${participation.full_name}`}
+						/>
+						<span>{participation.full_name}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</label>
+</label>
 
 <style>
 	.full-height {
