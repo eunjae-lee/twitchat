@@ -16,7 +16,6 @@
 
 	let title: string;
 	let submitting: boolean;
-	let notAllowedToCreateRoom: boolean;
 	let cannotCreateAnotherRoom: boolean;
 
 	function createRoomAndGo(title: string) {
@@ -25,9 +24,7 @@
 				goto(`/c/${room.slug}`);
 			})
 			.catch((error) => {
-				if (error.message === 'not allowed to create a room') {
-					notAllowedToCreateRoom = true;
-				} else if (error.message === 'cannot create another room') {
+				if (error.message === 'cannot create another room') {
 					cannotCreateAnotherRoom = true;
 				}
 			});
@@ -89,7 +86,7 @@
 			</label>
 		</div>
 		<div class="mt-8">
-			{#if notAllowedToCreateRoom || cannotCreateAnotherRoom}
+			{#if cannotCreateAnotherRoom}
 				<div class="alert alert-warning shadow-lg">
 					<div>
 						<svg class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -100,9 +97,7 @@
 								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
 							/></svg
 						>
-						{#if notAllowedToCreateRoom}
-							<span>{t('notAllowedToCreateRoom')}</span>
-						{:else if cannotCreateAnotherRoom}
+						{#if cannotCreateAnotherRoom}
 							<span>{t('cannotCreateAnotherRoom')}</span>
 						{/if}
 					</div>

@@ -86,8 +86,6 @@ declare
   admin_user_name text;
   admin_full_name text;
   admin_picture text;
-
-  allowed_to_create boolean;
   can_create_another_room boolean;
 begin
   select can_create_room()
@@ -107,13 +105,6 @@ begin
 
   if new.lang != 'ko' then
     new.lang := 'en';
-  end if;
-
-  SELECT admin_user_name = ANY ('{"eunjae_lee","eunjae_lee_ko","twitchat_app","chaewon_dev","changerlemond","bohynkang","83tt3r","boyeonihn","ramgee66","sudokeepcoding","dylayed","autumn_bom","channprj","uphill_gosu","yyijoo","gaebalgombal","imperativ2nxtlv","doomydoomydooms"}'::text[])
-  into allowed_to_create;
-
-  if allowed_to_create = false then
-    raise 'not allowed to create a room';
   end if;
 
   -- provide default values for begin_ts and end_ts
