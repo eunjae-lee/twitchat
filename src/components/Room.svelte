@@ -1,4 +1,5 @@
 <script lang="ts">
+	import debounce from 'just-debounce';
 	import type { ChatItem, Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
 	import { subscribeToMessages, subscribeToParticipations } from '$lib/room';
@@ -52,11 +53,16 @@
 		unsubscribe: unsubscribeParticipations,
 	} = subscribeToParticipations(room.id);
 
-	onMount(() => {
+	function updateVHUnit() {
 		// https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
 		let vh = window.innerHeight * 0.01;
 		// Then we set the value in the --vh custom property to the root of the document
 		document.documentElement.style.setProperty('--vh', `${vh}px`);
+	}
+
+	onMount(() => {
+		updateVHUnit();
+		window.addEventListener('resize', debounce(updateVHUnit, 100));
 	});
 
 	onDestroy(() => {
