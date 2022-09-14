@@ -50,7 +50,7 @@ create table rooms (
 alter table rooms enable row level security;
 create policy "Can create own rooms." on rooms for insert with check (auth.uid() = user_id);
 create policy "Can update own rooms." on rooms for update using (auth.uid() = user_id);
-create policy "Can view any rooms." on rooms for select using (true);
+create policy "Can view any rooms." on rooms for select using (now() <= end_ts + '7 day');
 
 alter table rooms alter column begin_ts set not null;
 alter table rooms alter column end_ts set not null;
@@ -369,7 +369,6 @@ begin
   delete from participations where room_id in (
     select id from rooms where end_ts + '7 day' < now()
   );
-  delete from rooms where end_ts + '7 day' < now();
 end;
 $$ language plpgsql;
 
