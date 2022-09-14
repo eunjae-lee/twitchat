@@ -366,6 +366,9 @@ begin
   delete from messages where room_id in (
     select id from rooms where end_ts + '7 day' < now()
   );
+  delete from participations where room_id in (
+    select id from rooms where end_ts + '7 day' < now()
+  );
 end;
 $$ language plpgsql;
 
