@@ -1,11 +1,27 @@
 import type { createRoom } from './db';
 
+const KEY_ROOM_ID = 'room_to_join_on_sign_in';
 const KEY_PAYLOAD_ROOM = 'create_room_on_sign_in';
 const KEY_REDIRECT_TO = 'redirect_to';
 
-export function storePayloadToCreateRoomAfterSignIn({
-	title,
-}: Omit<Parameters<typeof createRoom>[0], 'user_id'>) {
+export function storeRoomToJoinAfterSignIn({ slug }: { slug: string }) {
+	sessionStorage.setItem(KEY_ROOM_ID, JSON.stringify({ slug }));
+}
+
+export function popRoomToJoinAfterSignIn() {
+	let json;
+	try {
+		const payload = sessionStorage.getItem(KEY_ROOM_ID) as string;
+		sessionStorage.removeItem(KEY_ROOM_ID);
+		json = JSON.parse(payload);
+	} catch (_err) {
+		// ignore this
+	}
+
+	return json?.slug;
+}
+
+export function storePayloadToCreateRoomAfterSignIn({ title }: { title: string }) {
 	sessionStorage.setItem(KEY_PAYLOAD_ROOM, JSON.stringify({ title }));
 }
 
