@@ -64,7 +64,7 @@
 </svelte:head>
 
 <div class="container mx-auto max-w-xs md:max-w-sm h-screen flex flex-col justify-center">
-	<div class="card w-96 bg-base-100 shadow-xl">
+	<div class="card max-w-96 bg-base-100 shadow-xl">
 		<div class="card-body">
 			<div class="flex justify-center">
 				<img class="w-8" src="/logo-big.png" alt="TwitChat Logo" />

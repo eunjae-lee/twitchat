@@ -4,10 +4,21 @@
 	import { popRedirectionAfterSignIn } from '$lib/auth';
 	import { onMount } from 'svelte';
 	import { getter, authenticated } from '$lib/text';
+	import * as Sentry from '@sentry/browser';
 	const t = getter(authenticated);
 
 	let state: 'loading' | 'missing_email' = 'loading';
 	let showingWhy: boolean = false;
+
+	const hash = typeof window !== 'undefined' && window.location.hash;
+	if (!(hash || '').startsWith('#access_token')) {
+		Sentry.captureException('hash does not include access token', {
+			extra: {
+				hash,
+				session: $session,
+			},
+		});
+	}
 
 	$: {
 		const sessionExists = $session.user && $session.user.id;
