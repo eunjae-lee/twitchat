@@ -13,45 +13,76 @@
 </script>
 
 <script lang="ts">
-	import { getRoom, isParticipating, participate } from '$lib/db';
+	import { getRoom, isParticipating, participate, supabase } from '$lib/db';
 	import type { OpenGraphData, Room as RoomType } from '$lib/types';
 	import { session } from '$app/stores';
 	import Room from '../../components/Room.svelte';
 	import { getSiteTitle, room as roomText, newRoom as newRoomText, getter, merge } from '$lib/text';
 	import RoomDuration from '../../components/RoomDuration.svelte';
+	import { onMount } from 'svelte';
+	import {
+		popRoomToJoinAfterSignIn,
+		setRedirectionAfterSignIn,
+		storeRoomToJoinAfterSignIn,
+	} from '$lib/auth';
 
 	const t = getter(merge(roomText, newRoomText));
 	export let slug: string;
 	export let og: OpenGraphData;
 
+	const NEED_TO_LOGIN = 'need_to_login';
 	const NEED_TO_JOIN = 'need_to_join';
 	const JOINED = 'joined';
 	const LOADING = 'loading';
 
-	let status: 'need_to_join' | 'joined' | 'loading' = LOADING;
+	let status: 'need_to_login' | 'need_to_join' | 'joined' | 'loading' = LOADING;
 	let room: RoomType | undefined;
 	let notFound: boolean = false;
 
 	async function checkParticipation() {
+		status = (await isParticipating({ slug, user_id: $session.user.id })) ? JOINED : NEED_TO_JOIN;
+		if (status === NEED_TO_JOIN && popRoomToJoinAfterSignIn() === slug) {
+			join();
+		}
+	}
+
+	async function fetchRoom() {
 		room = (await getRoom({ slug }))!;
 		if (!room) {
 			notFound = true;
 		}
-		status = (await isParticipating({ slug, user_id: $session.user.id })) ? JOINED : NEED_TO_JOIN;
 	}
 
-	$: {
-		if ($session.user && $session.user.id) {
-			checkParticipation();
+	async function join() {
+		if (status === NEED_TO_LOGIN) {
+			setRedirectionAfterSignIn(`/c/${slug}`);
+			storeRoomToJoinAfterSignIn({ slug });
+
+			await supabase.auth.signIn(
+				{
+					provider: 'twitter',
+				},
+				{ redirectTo: window.location.origin + '/authenticated' }
+			);
+		} else if (status === NEED_TO_JOIN) {
+			await participate({ slug });
+			await checkParticipation();
 		}
 	}
 
-	$: canJoin = room && new Date() < new Date(room.end_ts);
-
-	async function join() {
-		await participate({ slug });
-		await checkParticipation();
+	$: {
+		if ($session.user?.id) {
+			checkParticipation();
+		} else {
+			status = NEED_TO_LOGIN;
+		}
 	}
+
+	$: roomStillAvailable = room && new Date() < new Date(room.end_ts);
+
+	onMount(() => {
+		fetchRoom();
+	});
 </script>
 
 <svelte:head>
@@ -78,7 +109,7 @@
 	<div class="flex h-screen justify-center items-center">Room not found</div>
 {/if}
 
-{#if status === NEED_TO_JOIN && room}
+{#if (status === NEED_TO_LOGIN || status === NEED_TO_JOIN) && room}
 	<div class="container narrow-container mx-auto flex flex-col items-center">
 		<div class="mt-16 w-full">
 			<a href="/" class="-ml-4 btn btn-ghost normal-case text-xl">
@@ -87,7 +118,7 @@
 			</a>
 		</div>
 
-		{#if canJoin}
+		{#if roomStillAvailable}
 			<p class="mt-12 text-xl">{t('joinMessage')}</p>
 		{/if}
 
@@ -101,7 +132,7 @@
 			<span class="ml-2">{room.full_name}</span>
 			<span class="ml-1 text-sm opacity-75">(@{room.user_name})</span>
 		</div>
-		{#if canJoin}
+		{#if roomStillAvailable}
 			<button class="mt-12 w-full btn btn-primary" type="button" on:click={join}>{t('join')}</button
 			>
 			<div class="mt-2 w-full"><RoomDuration end_ts={room.end_ts} /></div>
