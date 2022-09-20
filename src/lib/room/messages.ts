@@ -10,7 +10,7 @@ export function subscribeToMessages({
 }: {
 	roomId: string;
 	onMessagesLoadedInitially: () => void;
-	onNewMessage: () => void;
+	onNewMessage: (message: Message) => void;
 }) {
 	const messages = writable<Message[]>([]);
 	const state = writable<'init' | 'subscribed'>('init');
@@ -22,7 +22,7 @@ export function subscribeToMessages({
 				array.push(payload.new);
 				return array;
 			});
-			onNewMessage();
+			onNewMessage(payload.new);
 		})
 		.subscribe((event: string) => {
 			if (event === 'SUBSCRIBED') {
@@ -30,7 +30,8 @@ export function subscribeToMessages({
 			}
 		});
 
-	getPreviousMessages({ room_id: roomId }).then((result) => {
+	async function loadPreviousMessagesAndMerge() {
+		const result = await getPreviousMessages({ room_id: roomId });
 		messages.update((array) => {
 			const ids = new Set<string>();
 			return (
@@ -49,6 +50,9 @@ export function subscribeToMessages({
 					.sort((a, b) => new Date(a.created_ts).getTime() - new Date(b.created_ts).getTime())
 			);
 		});
+	}
+
+	loadPreviousMessagesAndMerge().then(() => {
 		onMessagesLoadedInitially();
 	});
 
@@ -59,5 +63,9 @@ export function subscribeToMessages({
 		}
 	}
 
-	return { state, messages, unsubscribe };
+	function refreshMessages() {
+		return loadPreviousMessagesAndMerge();
+	}
+
+	return { state, messages, unsubscribe, refreshMessages };
 }
