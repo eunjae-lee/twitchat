@@ -13,6 +13,7 @@ const en = {
 	menu: 'Menu',
 	remainingTime: 'Remaining time',
 	loading: 'Loading',
+	sending: 'Sending',
 };
 
 const ko: typeof en = {
@@ -30,6 +31,7 @@ const ko: typeof en = {
 	menu: '메뉴',
 	remainingTime: '남은 시간',
 	loading: '로딩 중',
+	sending: '전송 중',
 };
 
 export const room = {

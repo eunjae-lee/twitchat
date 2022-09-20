@@ -5,11 +5,12 @@
 
 	export let active: boolean;
 	export let room: Room;
+	export let onNewMessage: (params: { content: string; type: string }) => void;
 
 	const t = getter(roomTexts);
 	let textArea: HTMLTextAreaElement;
 	let message: string = '';
-	let submitting: boolean = false;
+	let submitting: boolean;
 	let inputHeight = 2;
 	let messageInputFocused: boolean = false;
 
@@ -18,6 +19,7 @@
 			return;
 		}
 		textArea.focus();
+		onNewMessage({ content: message, type: 'text' });
 		const messageToSend = message;
 		message = '';
 		submitting = true;
@@ -56,6 +58,6 @@
 		on:keydown={onKeyDown}
 	/>
 	{#if messageInputFocused || message.length > 0}
-		<button type="submit" class="btn btn-primary">{t('send')}</button>
+		<button type="submit" class="btn btn-primary" disabled={submitting}>{t('send')}</button>
 	{/if}
 </form>

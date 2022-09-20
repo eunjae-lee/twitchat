@@ -20,6 +20,7 @@
 	let chatItems: ChatItem[] = [];
 	let scrollToBottomAfterRendering: boolean;
 	let showGoToBottomButton: number = 0;
+	let localTempMessages: ChatItem[] = [];
 
 	function isScrollAlmostAtBottom() {
 		return (
@@ -29,20 +30,58 @@
 		);
 	}
 
+	function onSendingNewMessage({ content, type }: { content: string; type: string }) {
+		scrollToBottomAfterRendering = isScrollAlmostAtBottom();
+		if (!scrollToBottomAfterRendering) {
+			showGoToBottomButton += 1;
+		}
+
+		localTempMessages.push({
+			id: String(new Date().getTime()),
+			type: 'm',
+			created_ts: new Date().toISOString(),
+			message: {
+				id: `temp_${new Date().getTime()}`,
+				room_id: room.id,
+				user_id: $session.user.id,
+				created_ts: new Date().toISOString(),
+				content,
+				type,
+			},
+		} as ChatItem);
+
+		localTempMessages = localTempMessages;
+		// setTimeout(() => {
+		// 	// The first message sent right after joining the room is
+		// 	// sometimes not retrieved via realtime API :shrug:
+		// 	// So, let's pull the messages whenever it happens as a workaround.
+		// 	if (localTempMessages.length > 0) {
+		// 		refreshMessages();
+		// 	}
+		// }, 2000);
+	}
+
 	const {
 		state: roomState,
 		messages,
 		unsubscribe: unsubscribeMessages,
+		refreshMessages,
 	} = subscribeToMessages({
 		roomId: room.id,
 		onMessagesLoadedInitially: () => {
 			scrollToBottomAfterRendering = true;
 		},
-		onNewMessage: () => {
-			scrollToBottomAfterRendering = isScrollAlmostAtBottom();
-			if (!scrollToBottomAfterRendering) {
-				showGoToBottomButton += 1;
-			}
+		onNewMessage: (message) => {
+			localTempMessages = localTempMessages.filter((localMessage) => {
+				if (
+					localMessage.type === 'm' &&
+					localMessage.message.type === message.type &&
+					localMessage.message.content === message.content
+				) {
+					return false;
+				}
+				return true;
+			});
 		},
 	});
 
@@ -75,6 +114,7 @@
 
 	// merge messages and participations
 	$: chatItems = [
+		...localTempMessages,
 		...$messages.map(
 			(message) =>
 				({
@@ -200,7 +240,7 @@
 				>
 			</div>
 		{/if}
-		<MessageComposer active={state === 'active'} {room} />
+		<MessageComposer active={state === 'active'} {room} onNewMessage={onSendingNewMessage} />
 	</div>
 </div>
 
