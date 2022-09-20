@@ -27,7 +27,7 @@
 				{#if false}
 					<div class="dropdown dropdown-end">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label tabindex="0"><Bubble content={message.content} /></label>
+						<label tabindex="0"><Bubble content={message.content ?? ''} /></label>
 						<ul
 							tabindex="0"
 							class="mt-1 dropdown-content menu p-2 shadow bg-base-200 rounded-box w-36"
@@ -61,7 +61,7 @@
 				{/if}
 			</div>
 		{:else}
-			<div class="flex gap-2">
+			<div class="flex gap-2" aria-hidden>
 				<a class="shrink-0" href={`https://twitter.com/${participation.user_name}`} target="_blank"
 					><img
 						class="mt-1 rounded-full w-12 h-12"
@@ -77,6 +77,11 @@
 					</div>
 				</div>
 			</div>
+			<p class="sr-only">
+				<span>{participation.full_name}</span>
+				<span>{message.content}</span>
+				<span>{messageTime}</span>
+			</p>
 		{/if}
 	</div>
 {/if}
