@@ -7,6 +7,7 @@
 	export let room: Room;
 
 	const t = getter(roomTexts);
+	let textArea: HTMLTextAreaElement;
 	let message: string = '';
 	let submitting: boolean = false;
 	let inputHeight = 2;
@@ -16,9 +17,11 @@
 		if (!active || submitting || !message) {
 			return;
 		}
-		submitting = true;
-		await sendTextMessage({ room_id: room.id, message });
+		textArea.focus();
+		const messageToSend = message;
 		message = '';
+		submitting = true;
+		await sendTextMessage({ room_id: room.id, message: messageToSend });
 		submitting = false;
 	}
 
@@ -43,6 +46,7 @@
 <form class="w-full p-3 flex gap-2" on:submit|preventDefault={onSubmit}>
 	<textarea
 		class="w-full text-base leading-7 textarea textarea-primary"
+		bind:this={textArea}
 		bind:value={message}
 		style:height="{inputHeight}rem"
 		placeholder={t('placeholder')}
