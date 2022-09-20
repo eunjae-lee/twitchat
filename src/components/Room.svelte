@@ -53,18 +53,6 @@
 		unsubscribe: unsubscribeParticipations,
 	} = subscribeToParticipations(room.id);
 
-	function updateVHUnit() {
-		// https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
-		let vh = window.innerHeight * 0.01;
-		// Then we set the value in the --vh custom property to the root of the document
-		document.documentElement.style.setProperty('--vh', `${vh}px`);
-	}
-
-	onMount(() => {
-		updateVHUnit();
-		window.addEventListener('resize', debounce(updateVHUnit, 100));
-	});
-
 	onDestroy(() => {
 		unsubscribeMessages();
 		unsubscribeParticipations();
@@ -108,7 +96,7 @@
 	].sort((a, b) => new Date(a.created_ts).getTime() - new Date(b.created_ts).getTime());
 </script>
 
-<div class="flex flex-col full-height">
+<div class="flex flex-col absolute inset-0">
 	<div class="grow-0 shrink-0 navbar bg-base-100">
 		<div class="flex-none">
 			<img src="/logo.png" alt="TwitChat logo" class="ml-2 w-8" />
@@ -241,10 +229,6 @@
 </label>
 
 <style>
-	.full-height {
-		height: 100vh; /* Fallback for browsers that do not support Custom Properties */
-		height: calc(var(--vh, 1vh) * 100);
-	}
 	.keep-all {
 		word-break: keep-all;
 	}
