@@ -10,6 +10,9 @@ const en = {
 	renameTitle: 'Rename the title',
 	gotoBottom: 'Go to bottom',
 	participants: 'Participants',
+	menu: 'Menu',
+	remainingTime: 'Remaining time',
+	loading: 'Loading',
 };
 
 const ko: typeof en = {
@@ -24,6 +27,9 @@ const ko: typeof en = {
 	renameTitle: '방 제목 바꾸기',
 	gotoBottom: '맨 아래로 가기',
 	participants: '참여자',
+	menu: '메뉴',
+	remainingTime: '남은 시간',
+	loading: '로딩 중',
 };
 
 export const room = {

@@ -27,7 +27,14 @@ export const handle: Handle = sequence(
 	},
 	...handleAuth({
 		logout: { returnTo: '/sign_in' },
-	})
+	}),
+	function replaceLangTag({ event, resolve }) {
+		return resolve(event, {
+			transformPage: ({ html }) => {
+				return html.replace('%lang%', event.locals.lang);
+			},
+		});
+	}
 );
 
 export const getSession: GetSession = async (event: RequestEvent) => {

@@ -5,6 +5,7 @@ const en = {
 	whyDesc:
 		'TwitChat uses an authentication solution named Supabase, and they do not support Twitter accounts missing email address.',
 	seeMore: 'See more →',
+	loading: 'Loading',
 };
 
 const ko: typeof en = {
@@ -14,6 +15,7 @@ const ko: typeof en = {
 	whyDesc:
 		'트윗챗에서는 Supabase라는 서비스를 통해 인증을 처리하고 있는데, Supabase에서는 이메일 주소를 등록하지 않은 트위터 계정을 처리하지 못하기 때문입니다.',
 	seeMore: '더 읽어보기 →',
+	loading: '로딩 중',
 };
 
 export const authenticated = {
