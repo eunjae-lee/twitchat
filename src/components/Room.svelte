@@ -1,5 +1,4 @@
 <script lang="ts">
-	import debounce from 'just-debounce';
 	import type { ChatItem, Room } from '$lib/types';
 	import { getter, room as roomTexts } from '$lib/text';
 	import { subscribeToMessages, subscribeToParticipations } from '$lib/room';
@@ -10,6 +9,7 @@
 	import ParticipationView from './ParticipationView.svelte';
 	import CountDown from './CountDown.svelte';
 	import { renameRoom } from '$lib/db';
+	import Confetti from 'js-confetti';
 
 	export let room: Room;
 
@@ -72,6 +72,10 @@
 			scrollToBottomAfterRendering = true;
 		},
 		onNewMessage: (message) => {
+			if (message.type === 'emoji') {
+				new Confetti().addConfetti({ emojis: [JSON.parse(message.content!).emoji] });
+			}
+
 			localTempMessages = localTempMessages.filter((localMessage) => {
 				if (
 					localMessage.type === 'm' &&

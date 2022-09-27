@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { makeItTwo } from '$lib/number';
 	import { getter, room as roomTexts } from '$lib/text';
+	import Confetti from 'js-confetti';
 	const t = getter(roomTexts);
 
 	export let end_ts: string;
@@ -15,14 +16,7 @@
 	const WARNING_TIME = 60 * 3;
 	const ERROR_TIME = 60;
 
-	let Confetti: any;
-
 	onMount(() => {
-		// load js-confetti asynchronously because we don't need it immediately
-		import('js-confetti').then((module) => {
-			Confetti = module.default;
-		});
-
 		intervalId = setInterval(() => {
 			secondsLeft -= 1;
 			if (secondsLeft < 0) {
@@ -30,11 +24,9 @@
 				clearInterval(intervalId);
 				intervalId = undefined;
 				onClosed();
-				if (Confetti) {
-					new Confetti().addConfetti({
-						emojis: ['🌈', '⚡️', '💥', '✨', '💫', '🌸'],
-					});
-				}
+				new Confetti().addConfetti({
+					emojis: ['🌈', '⚡️', '💥', '✨', '💫', '🌸'],
+				});
 				return;
 			}
 
