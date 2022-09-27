@@ -11,6 +11,16 @@ export async function sendTextMessage({ room_id, message }: { room_id: string; m
 	]);
 }
 
+export async function sendEmojiMessage({ room_id, emoji }: { room_id: string; emoji: string }) {
+	await supabase.from<Message>('messages').insert([
+		{
+			room_id,
+			content: emoji,
+			type: 'emoji',
+		},
+	]);
+}
+
 export async function getPreviousMessages({ room_id }: { room_id: string }): Promise<Message[]> {
 	const { data } = await supabase.from<Message>('messages').select('*').eq('room_id', room_id);
 	return data || [];

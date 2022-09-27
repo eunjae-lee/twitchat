@@ -22,7 +22,7 @@
 	let isLocalTempMessage = message.id.startsWith('temp_');
 </script>
 
-{#if message.type === 'text' && message.content}
+{#if (message.type === 'text' || message.type === 'emoji') && message.content}
 	<div class="flex" class:justify-end={isMine}>
 		{#if isMine}
 			<div class="flex items-end gap-2">
@@ -51,11 +51,13 @@
 				{:else}
 					<span class="text-xs opacity-75 mb-1">{messageTime}</span>
 				{/if}
-				<Bubble content={message.content} />
+				<Bubble content={message.content} type={message.type} />
 				{#if false}
 					<div class="dropdown dropdown-end">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label tabindex="0"><Bubble content={message.content ?? ''} /></label>
+						<label tabindex="0"
+							><Bubble content={message.content ?? ''} type={message.type} /></label
+						>
 						<ul
 							tabindex="0"
 							class="mt-1 dropdown-content menu p-2 shadow bg-base-200 rounded-box w-36"
@@ -100,7 +102,7 @@
 				<div>
 					<p class="text-sm">{participation.full_name}</p>
 					<div class="flex items-end gap-2">
-						<Bubble content={message.content} />
+						<Bubble content={message.content} type={message.type} />
 						<span class="text-xs opacity-75 mb-1">{messageTime}</span>
 					</div>
 				</div>
